@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { SkillCard } from '@/components/SkillCard';
@@ -67,38 +68,42 @@ const SkillSwipeApp = () => {
     const sessionId = await createAssessment(skills.length, location);
     if (!sessionId) return;
 
-    // Fetch real jobs based on skills
+    // Fetch real jobs based on skills - focus on programming/tech jobs
     if (currentSkills.length > 0) {
-      // Get tech skills for search
+      // Get tech skills for search and add essential programming terms
       const techSkills = currentSkills.filter(skill => 
         skill.category === 'tech' || skill.category === 'data'
       );
       
-      // Create search terms for OR logic - use individual skills
+      // Create search terms focused on programming jobs
       let searchTerms = '';
       
       if (techSkills.length > 0) {
-        // Map skills to searchable terms and use OR logic
+        // Map skills to searchable terms and add programming-specific terms
         const skillTerms = techSkills.map(skill => {
           // Map some skills to more searchable terms
           if (skill.name === 'Git & GitHub') return 'git';
           if (skill.name === 'Tailwind CSS') return 'tailwind';
-          if (skill.name === 'UX/UI Design') return 'frontend';
+          if (skill.name === 'UX/UI Design') return 'frontend developer';
           if (skill.name === 'Node.js') return 'nodejs';
           return skill.name.toLowerCase();
         });
         
-        // Use OR logic with individual terms
-        searchTerms = skillTerms.join(' ');
+        // Add essential programming terms to ensure we get tech jobs
+        const programmingTerms = ['developer', 'programmer', 'software engineer', 'frontend', 'backend', 'fullstack'];
+        const allTerms = [...skillTerms, ...programmingTerms];
+        
+        // Use OR logic with programming-focused terms
+        searchTerms = allTerms.join(' ');
       } else {
-        // Fallback for non-tech skills
-        searchTerms = 'developer';
+        // Fallback for non-tech skills - still focus on programming
+        searchTerms = 'developer programmer software engineer frontend backend';
       }
       
-      console.log('Searching real jobs with OR terms:', searchTerms, 'location:', location);
+      console.log('Searching programming jobs with OR terms:', searchTerms, 'location:', location);
       
       const searchParams: any = {
-        what_or: searchTerms, // Use what_or for OR logic instead of what
+        what_or: searchTerms,
         page: 1,
       };
       
@@ -112,12 +117,12 @@ const SkillSwipeApp = () => {
     }
   };
 
-  // Save job matches when jobs are loaded
+  // Save job matches when jobs are loaded - only once per session
   useEffect(() => {
     if (showResults && realJobs.length > 0) {
       saveJobMatches(realJobs);
     }
-  }, [showResults, realJobs, saveJobMatches]);
+  }, [showResults, realJobs]);
 
   const handleSwipe = async (dir: 'left' | 'right') => {
     const swipedSkill = skills[currentIndex];
@@ -175,7 +180,7 @@ const SkillSwipeApp = () => {
         {/* Real Job Opportunities */}
         {!jobsLoading && realJobs.length > 0 && (
           <div className="w-full max-w-4xl mb-8">
-            <h2 className="text-2xl font-semibold mb-4 text-primary">Job Opportunities for You</h2>
+            <h2 className="text-2xl font-semibold mb-4 text-primary">Programming Job Opportunities for You</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
               {realJobs.slice(0, 6).map(job => (
                 <Card key={job.id} className="text-left bg-card border-primary/20 hover:border-primary/50 transition-all">

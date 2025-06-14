@@ -25,6 +25,7 @@ interface Job {
 export const useSkillAssessment = () => {
   const [currentSessionId, setCurrentSessionId] = useState<string | null>(null);
   const [matchedSkills, setMatchedSkills] = useState<Skill[]>([]);
+  const [jobsSaved, setJobsSaved] = useState(false);
   const { toast } = useToast();
 
   const createSession = async (totalSkills: number, location: string) => {
@@ -46,6 +47,7 @@ export const useSkillAssessment = () => {
 
       setCurrentSessionId(data.id);
       setMatchedSkills([]);
+      setJobsSaved(false);
       console.log('Created anonymous session:', data.id);
       return data.id;
     } catch (error: any) {
@@ -66,11 +68,18 @@ export const useSkillAssessment = () => {
       const updatedSkills = [...matchedSkills, skill];
       setMatchedSkills(updatedSkills);
 
+      // Convert skills to plain objects for JSON storage
+      const skillsForDb = updatedSkills.map(s => ({
+        id: s.id,
+        name: s.name,
+        category: s.category
+      }));
+
       const { error } = await supabase
         .from('skill_sessions')
         .update({
           skills_matched: updatedSkills.length,
-          matched_skills: updatedSkills,
+          matched_skills: skillsForDb,
         })
         .eq('id', currentSessionId);
 
@@ -87,7 +96,7 @@ export const useSkillAssessment = () => {
   };
 
   const saveJobMatches = async (jobs: Job[]) => {
-    if (!currentSessionId || jobs.length === 0) return;
+    if (!currentSessionId || jobs.length === 0 || jobsSaved) return;
 
     try {
       const jobData = jobs.map(job => ({
@@ -107,6 +116,8 @@ export const useSkillAssessment = () => {
         .eq('id', currentSessionId);
 
       if (error) throw error;
+      
+      setJobsSaved(true);
       console.log('Saved', jobs.length, 'job matches');
       
       toast({
@@ -126,6 +137,7 @@ export const useSkillAssessment = () => {
   const resetSession = () => {
     setCurrentSessionId(null);
     setMatchedSkills([]);
+    setJobsSaved(false);
   };
 
   return {
