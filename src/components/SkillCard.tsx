@@ -10,7 +10,6 @@ interface SkillCardProps {
 }
 
 const SWIPE_CONFIDENCE_THRESHOLD = 10000;
-const swipeConfidenceThreshold = 10000;
 
 const variants = {
   enter: {
@@ -35,7 +34,7 @@ const variants = {
     rotate: direction < 0 ? -30 : 30,
     transition: {
       duration: 0.5,
-      ease: "easeInOut"
+      ease: [0.4, 0, 0.2, 1]
     }
   }),
 };
@@ -74,27 +73,23 @@ export const SkillCard: React.FC<SkillCardProps> = ({ skillName, skillCategory, 
     <motion.div
       className={`absolute flex items-center justify-center w-[300px] h-[400px] rounded-2xl shadow-2xl cursor-grab ${getCardBackground(skillCategory)} overflow-hidden`}
       drag="x"
-      dragConstraints={{ left: 0, right: 0 }}
-      dragElastic={1}
+      dragConstraints={{ left: -200, right: 200 }}
+      dragElastic={0.2}
       onDragEnd={handleDragEnd}
       variants={variants}
       initial="enter"
       animate="center"
       exit="exit"
       custom={0}
-      style={{
-        x: 0,
-        rotate: 0,
-      }}
       whileDrag={{
-        rotate: (value) => value.x / 10,
+        rotate: (_, info) => info.offset.x / 8,
         scale: 1.05,
+        transition: { duration: 0 }
       }}
       transition={{ 
         type: 'spring', 
         stiffness: 300, 
-        damping: 30,
-        rotate: { type: 'spring', stiffness: 200, damping: 10 }
+        damping: 30
       }}
     >
       {isTechSkill && <CodeSnippetBackground skillName={skillName} />}
