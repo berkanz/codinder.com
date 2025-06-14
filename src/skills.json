@@ -1,18 +1,18 @@
 
 [
-  { "id": 1, "name": "React" },
-  { "id": 2, "name": "Figma" },
-  { "id": 3, "name": "Docker" },
-  { "id": 4, "name": "Public Speaking" },
-  { "id": 5, "name": "Node.js" },
-  { "id": 6, "name": "Project Management" },
-  { "id": 7, "name": "Tailwind CSS" },
-  { "id": 8, "name": "SQL" },
-  { "id": 9, "name": "Content Creation" },
-  { "id": 10, "name": "Python" },
-  { "id": 11, "name": "Data Analysis" },
-  { "id": 12, "name": "Git & GitHub" },
-  { "id": 13, "name": "SEO" },
-  { "id": 14, "name": "UX/UI Design" },
-  { "id": 15, "name": "Product-Led Growth" }
+  { "id": 1, "name": "React", "category": "tech" },
+  { "id": 2, "name": "Figma", "category": "design" },
+  { "id": 3, "name": "Docker", "category": "tech" },
+  { "id": 4, "name": "Public Speaking", "category": "soft" },
+  { "id": 5, "name": "Node.js", "category": "tech" },
+  { "id": 6, "name": "Project Management", "category": "management" },
+  { "id": 7, "name": "Tailwind CSS", "category": "tech" },
+  { "id": 8, "name": "SQL", "category": "data" },
+  { "id": 9, "name": "Content Creation", "category": "soft" },
+  { "id": 10, "name": "Python", "category": "data" },
+  { "id": 11, "name": "Data Analysis", "category": "data" },
+  { "id": 12, "name": "Git & GitHub", "category": "tech" },
+  { "id": 13, "name": "SEO", "category": "soft" },
+  { "id": 14, "name": "UX/UI Design", "category": "design" },
+  { "id": 15, "name": "Product-Led Growth", "category": "management" }
 ]

@@ -1,35 +1,71 @@
-
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { SkillCard } from '@/components/SkillCard';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { ArrowLeft, ArrowRight, Linkedin, RefreshCw } from 'lucide-react';
 import skillsData from '@/skills.json';
+import jobProfilesData from '@/jobProfiles.json';
 
 type Skill = {
   id: number;
   name: string;
+  category: string;
+};
+
+type JobProfile = {
+  id: string;
+  title: string;
+  description: string;
+  requiredSkills: number[];
 };
 
 const Index = () => {
   const [skills] = useState<Skill[]>(skillsData);
+  const [jobProfiles] = useState<JobProfile[]>(jobProfilesData);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [mySkills, setMySkills] = useState<Skill[]>([]);
   const [showResults, setShowResults] = useState(false);
   const [direction, setDirection] = useState(0);
+  const [bestMatch, setBestMatch] = useState<JobProfile | null>(null);
+
+  const calculateBestMatch = (currentSkills: Skill[]) => {
+    const userSkillIds = new Set(currentSkills.map(s => s.id));
+    let bestProfile: JobProfile | null = null;
+    let maxMatchScore = -1;
+
+    jobProfiles.forEach(profile => {
+      const matchedSkills = profile.requiredSkills.filter(skillId => userSkillIds.has(skillId));
+      const matchScore = matchedSkills.length / profile.requiredSkills.length;
+
+      if (matchScore > maxMatchScore) {
+        maxMatchScore = matchScore;
+        bestProfile = profile;
+      }
+    });
+
+    if (bestProfile && maxMatchScore > 0) {
+      setBestMatch(bestProfile);
+    } else {
+      setBestMatch(null);
+    }
+  };
 
   const handleSwipe = (dir: 'left' | 'right') => {
     const swipedSkill = skills[currentIndex];
     
     setDirection(dir === 'right' ? 1 : -1);
 
+    let updatedMySkills = mySkills;
     if (dir === 'right') {
-      setMySkills((prev) => [...prev, swipedSkill]);
+      updatedMySkills = [...mySkills, swipedSkill];
+      setMySkills(updatedMySkills);
     }
 
     const nextIndex = currentIndex + 1;
     if (nextIndex >= skills.length) {
+      calculateBestMatch(updatedMySkills);
       setTimeout(() => setShowResults(true), 300);
     }
     setCurrentIndex(nextIndex);
@@ -39,6 +75,7 @@ const Index = () => {
     setCurrentIndex(0);
     setMySkills([]);
     setShowResults(false);
+    setBestMatch(null);
   };
   
   const shareOnLinkedIn = () => {
@@ -70,6 +107,19 @@ const Index = () => {
           <Progress value={percentage} className="w-full h-4" />
         </div>
 
+        {bestMatch && (
+          <Card className="w-full max-w-md mb-6 bg-card border-primary/50 text-left">
+            <CardHeader>
+              <CardTitle className="text-2xl text-primary">Your Top Role Match</CardTitle>
+              <CardDescription>Based on your skills, this could be a great fit for you!</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <h3 className="text-xl font-semibold text-card-foreground">{bestMatch.title}</h3>
+              <p className="text-muted-foreground mt-1">{bestMatch.description}</p>
+            </CardContent>
+          </Card>
+        )}
+
         <div className="mb-8 text-left max-w-md w-full">
             <h3 className="text-lg font-semibold mb-2">Skills you have:</h3>
             <ul className="list-disc list-inside text-muted-foreground">
@@ -98,6 +148,7 @@ const Index = () => {
             <SkillCard
               key={currentIndex}
               skillName={currentSkill.name}
+              skillCategory={currentSkill.category}
               onSwipe={(dir) => handleSwipe(dir)}
             />
           )}

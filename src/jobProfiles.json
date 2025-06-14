@@ -1,0 +1,33 @@
+
+[
+  {
+    "id": "frontend-developer",
+    "title": "Frontend Developer",
+    "description": "Builds the user-facing part of websites and web applications. You seem to have a knack for the technologies they use.",
+    "requiredSkills": [1, 7, 12, 14, 5]
+  },
+  {
+    "id": "product-manager",
+    "title": "Product Manager",
+    "description": "Guides the success of a product and leads the cross-functional team that is responsible for improving it. Your skills align well with this role.",
+    "requiredSkills": [6, 15, 4, 11, 14]
+  },
+  {
+    "id": "ux-ui-designer",
+    "title": "UX/UI Designer",
+    "description": "Creates user-friendly interfaces that enable users to understand how to use complex technical products. Your design and user-centric skills are a great fit.",
+    "requiredSkills": [2, 14, 9, 13]
+  },
+  {
+    "id": "data-analyst",
+    "title": "Data Analyst",
+    "description": "Collects, cleans, and interprets data sets in order to answer a question or solve a problem. Your analytical skills are pointing in this direction.",
+    "requiredSkills": [8, 11, 10, 6]
+  },
+  {
+    "id": "full-stack-developer",
+    "title": "Full Stack Developer",
+    "description": "Works on both the front-end and back-end of an application. You have a solid mix of skills for this versatile role.",
+    "requiredSkills": [1, 5, 7, 8, 3, 12]
+  }
+]
