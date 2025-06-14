@@ -1,5 +1,4 @@
-
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { SkillCard } from '@/components/SkillCard';
 import { Button } from '@/components/ui/button';
@@ -33,8 +32,15 @@ type MatchedJob = JobProfile & {
   missingSkills: Skill[];
 };
 
+// Function to randomly select skills
+const getRandomSkills = (allSkills: Skill[], count: number): Skill[] => {
+  const shuffled = [...allSkills].sort(() => 0.5 - Math.random());
+  return shuffled.slice(0, count);
+};
+
 const Index = () => {
-  const [skills] = useState<Skill[]>(skillsData);
+  const [allSkills] = useState<Skill[]>(skillsData);
+  const [skills, setSkills] = useState<Skill[]>([]);
   const [jobProfiles] = useState<JobProfile[]>(jobProfilesData);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [mySkills, setMySkills] = useState<Skill[]>([]);
@@ -43,6 +49,12 @@ const Index = () => {
   const [matchedJobs, setMatchedJobs] = useState<MatchedJob[]>([]);
   const [location, setLocation] = useState('');
   const { jobs: realJobs, loading: jobsLoading, searchJobs } = useJobs();
+
+  // Initialize with 20 random skills on component mount
+  useEffect(() => {
+    const randomSkills = getRandomSkills(allSkills, 20);
+    setSkills(randomSkills);
+  }, [allSkills]);
 
   const countries = [
     'United Kingdom', 'United States', 'Canada', 'Australia', 'Germany', 
@@ -132,6 +144,9 @@ const Index = () => {
     setMySkills([]);
     setShowResults(false);
     setMatchedJobs([]);
+    // Get new random skills for the next round
+    const randomSkills = getRandomSkills(allSkills, 20);
+    setSkills(randomSkills);
   };
   
   const shareOnLinkedIn = () => {
