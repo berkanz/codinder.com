@@ -10,26 +10,32 @@ interface SkillCardProps {
 }
 
 const SWIPE_CONFIDENCE_THRESHOLD = 10000;
+const swipeConfidenceThreshold = 10000;
 
 const variants = {
   enter: {
     y: 100,
     opacity: 0,
     scale: 0.8,
+    rotate: 0,
   },
   center: {
     zIndex: 1,
     y: 0,
     opacity: 1,
     scale: 1,
+    rotate: 0,
   },
   exit: (direction: number) => ({
     zIndex: 0,
-    x: direction < 0 ? -300 : 300,
+    x: direction < 0 ? -1000 : 1000,
+    y: direction < 0 ? -100 : -100,
     opacity: 0,
-    scale: 0.9,
+    scale: 0.5,
+    rotate: direction < 0 ? -30 : 30,
     transition: {
-      duration: 0.3
+      duration: 0.5,
+      ease: "easeInOut"
     }
   }),
 };
@@ -76,7 +82,20 @@ export const SkillCard: React.FC<SkillCardProps> = ({ skillName, skillCategory, 
       animate="center"
       exit="exit"
       custom={0}
-      transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+      style={{
+        x: 0,
+        rotate: 0,
+      }}
+      whileDrag={{
+        rotate: (value) => value.x / 10,
+        scale: 1.05,
+      }}
+      transition={{ 
+        type: 'spring', 
+        stiffness: 300, 
+        damping: 30,
+        rotate: { type: 'spring', stiffness: 200, damping: 10 }
+      }}
     >
       {isTechSkill && <CodeSnippetBackground skillName={skillName} />}
       <h2 className="relative text-3xl font-bold text-center p-4 text-primary-foreground">{skillName}</h2>
