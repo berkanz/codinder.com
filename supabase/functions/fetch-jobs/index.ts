@@ -134,13 +134,14 @@ serve(async (req) => {
       );
     }
 
-    // Determine country code - default to 'us' if no country specified or country not found
-    let countryCode = 'us'; // Changed default to US for worldwide
+    // Determine country code - default to 'us' for worldwide if no country specified
+    let countryCode = 'us'; // Default for worldwide searches
     if (country && countryCodeMap[country]) {
       countryCode = countryCodeMap[country];
+      console.log('Country selected:', country, '-> using country code:', countryCode);
+    } else {
+      console.log('No specific country selected, using worldwide default:', countryCode);
     }
-
-    console.log('Using country code:', countryCode, 'for country:', country || 'worldwide');
 
     // Build Adzuna API URL with dynamic country
     const baseUrl = `https://api.adzuna.com/v1/api/jobs/${countryCode}/search`;
@@ -150,6 +151,10 @@ serve(async (req) => {
     url.searchParams.set('app_key', appKey);
     url.searchParams.set('results_per_page', results_per_page.toString());
     url.searchParams.set('content-type', 'application/json');
+    
+    // Add tech-specific parameters to get better programming jobs
+    url.searchParams.set('max_days_old', '60'); // Jobs from last 60 days
+    url.searchParams.set('permanent', '1'); // Permanent positions only
     
     if (what) url.searchParams.set('what', what);
     if (where) url.searchParams.set('where', where);
@@ -179,7 +184,7 @@ serve(async (req) => {
     }
 
     const data: AdzunaResponse = await response.json();
-    console.log(`Successfully fetched ${data.results?.length || 0} jobs from Adzuna for ${countryCode}`);
+    console.log(`Successfully fetched ${data.results?.length || 0} jobs from Adzuna for country code: ${countryCode}`);
 
     // Transform the data to match our expected format
     const transformedJobs = data.results?.map(job => ({

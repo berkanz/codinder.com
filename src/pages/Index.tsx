@@ -63,23 +63,31 @@ const Index = () => {
   const calculateJobMatches = async (currentSkills: Skill[]) => {
     console.log('Calculating job matches with skills:', currentSkills.map(s => s.name));
 
-    // Fetch real jobs based on top skills
+    // Fetch real jobs based on skills
     if (currentSkills.length > 0) {
-      const topSkillNames = currentSkills
-        .slice(0, 3) // Take top 3 skills
-        .map(skill => skill.name)
-        .join(' ');
+      // Create tech-focused search terms based on user skills
+      const techSkills = currentSkills.filter(skill => 
+        skill.category === 'tech' || skill.category === 'data'
+      );
       
-      console.log('Searching real jobs with skills:', topSkillNames, 'location:', location);
+      let searchTerms = 'frontend developer React TypeScript JavaScript';
       
-      // Only pass country if a location is selected, otherwise let it default to UK for now
+      if (techSkills.length > 0) {
+        const skillNames = techSkills.map(skill => skill.name).join(' ');
+        searchTerms = `${skillNames} developer programmer software engineer`;
+      }
+      
+      console.log('Searching real jobs with terms:', searchTerms, 'location:', location);
+      
       const searchParams: any = {
-        what: topSkillNames,
+        what: searchTerms,
         page: 1,
       };
       
+      // Always pass the country if one is selected
       if (location) {
         searchParams.country = location;
+        console.log('Setting country parameter to:', location);
       }
       
       await searchJobs(searchParams);

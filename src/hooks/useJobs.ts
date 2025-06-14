@@ -51,7 +51,7 @@ export const useJobs = (): UseJobsReturn => {
     try {
       console.log('Searching jobs with params:', params);
 
-      // Build query parameters
+      // Build query parameters as URL search params for GET request
       const queryParams = new URLSearchParams();
       if (params.what) queryParams.set('what', params.what);
       if (params.where) queryParams.set('where', params.where);
@@ -60,13 +60,8 @@ export const useJobs = (): UseJobsReturn => {
       if (params.salary_min) queryParams.set('salary_min', params.salary_min);
       if (params.sort_by) queryParams.set('sort_by', params.sort_by);
 
-      // Call our Supabase Edge Function
-      const { data, error: functionError } = await supabase.functions.invoke('fetch-jobs', {
-        body: queryParams.toString(),
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-      });
+      // Call our Supabase Edge Function via GET with query parameters
+      const { data, error: functionError } = await supabase.functions.invoke('fetch-jobs?' + queryParams.toString());
 
       if (functionError) {
         console.error('Supabase function error:', functionError);
@@ -109,7 +104,7 @@ export const useJobs = (): UseJobsReturn => {
 
   // Load default jobs on mount
   useEffect(() => {
-    searchJobs({ what: 'developer' });
+    searchJobs({ what: 'React TypeScript JavaScript frontend developer' });
   }, []);
 
   return {
