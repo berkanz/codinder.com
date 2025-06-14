@@ -65,16 +65,26 @@ const Index = () => {
 
     // Fetch real jobs based on skills
     if (currentSkills.length > 0) {
-      // Create tech-focused search terms based on user skills
+      // Create focused search terms based on top tech skills
       const techSkills = currentSkills.filter(skill => 
         skill.category === 'tech' || skill.category === 'data'
       );
       
-      let searchTerms = 'frontend developer React TypeScript JavaScript';
+      // Use only the top 2-3 most relevant tech skills for better results
+      let searchTerms = 'developer';
       
       if (techSkills.length > 0) {
-        const skillNames = techSkills.map(skill => skill.name).join(' ');
-        searchTerms = `${skillNames} developer programmer software engineer`;
+        // Take only the first 2-3 tech skills to avoid overly complex queries
+        const topSkills = techSkills.slice(0, 3);
+        const skillNames = topSkills.map(skill => {
+          // Map some skills to more searchable terms
+          if (skill.name === 'Git & GitHub') return 'git';
+          if (skill.name === 'Tailwind CSS') return 'css';
+          if (skill.name === 'UX/UI Design') return 'frontend';
+          return skill.name.toLowerCase();
+        }).join(' ');
+        
+        searchTerms = `${skillNames} developer`;
       }
       
       console.log('Searching real jobs with terms:', searchTerms, 'location:', location);

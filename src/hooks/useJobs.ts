@@ -102,9 +102,9 @@ export const useJobs = (): UseJobsReturn => {
     }
   };
 
-  // Load default jobs on mount
+  // Load default jobs on mount with simpler search terms
   useEffect(() => {
-    searchJobs({ what: 'React TypeScript JavaScript frontend developer' });
+    searchJobs({ what: 'react typescript developer' });
   }, []);
 
   return {
