@@ -44,11 +44,20 @@ const Index = () => {
   const [location, setLocation] = useState('');
   const { jobs: realJobs, loading: jobsLoading, searchJobs } = useJobs();
 
-  const ukLocations = [
-    'London', 'Manchester', 'Birmingham', 'Edinburgh', 'Glasgow', 
-    'Liverpool', 'Bristol', 'Leeds', 'Sheffield', 'Newcastle',
-    'Nottingham', 'Cardiff', 'Belfast', 'Brighton', 'Oxford',
-    'Cambridge', 'Bath', 'York', 'Chester', 'Canterbury'
+  const countries = [
+    'United Kingdom', 'United States', 'Canada', 'Australia', 'Germany', 
+    'France', 'Netherlands', 'Sweden', 'Norway', 'Denmark',
+    'Switzerland', 'Austria', 'Belgium', 'Ireland', 'Spain',
+    'Italy', 'Portugal', 'Poland', 'Czech Republic', 'Hungary',
+    'Finland', 'Estonia', 'Latvia', 'Lithuania', 'Slovenia',
+    'Slovakia', 'Croatia', 'Romania', 'Bulgaria', 'Greece',
+    'Cyprus', 'Malta', 'Luxembourg', 'Japan', 'Singapore',
+    'Hong Kong', 'South Korea', 'Taiwan', 'Israel', 'UAE',
+    'Saudi Arabia', 'Qatar', 'Kuwait', 'Bahrain', 'Oman',
+    'Turkey', 'India', 'China', 'Thailand', 'Malaysia',
+    'Indonesia', 'Philippines', 'Vietnam', 'New Zealand',
+    'South Africa', 'Kenya', 'Nigeria', 'Egypt', 'Morocco',
+    'Brazil', 'Argentina', 'Chile', 'Colombia', 'Mexico'
   ];
 
   const calculateJobMatches = async (currentSkills: Skill[]) => {
@@ -150,9 +159,9 @@ const Index = () => {
         {/* Real Job Opportunities */}
         {!jobsLoading && realJobs.length > 0 && (
           <div className="w-full max-w-4xl mb-8">
-            <h2 className="text-2xl font-semibold mb-4 text-primary">Real Job Opportunities</h2>
+            <h2 className="text-2xl font-semibold mb-4 text-primary">Job Opportunities for You</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-              {realJobs.slice(0, 4).map(job => (
+              {realJobs.slice(0, 6).map(job => (
                 <Card key={job.id} className="text-left bg-card border-primary/20 hover:border-primary/50 transition-all">
                   <CardHeader>
                     <CardTitle className="text-lg">{job.title}</CardTitle>
@@ -181,48 +190,6 @@ const Index = () => {
           </div>
         )}
 
-        {/* Sample Job Profiles */}
-        {matchedJobs.length > 0 && (
-          <div className="w-full max-w-2xl space-y-6">
-            <h2 className="text-2xl font-semibold mb-4 text-primary">Sample Job Profiles</h2>
-            {matchedJobs.map(job => (
-              <Card key={job.id} className="text-left bg-card border-primary/20 hover:border-primary/50 transition-all">
-                <CardHeader>
-                  <div className="flex justify-between items-start">
-                    <div>
-                      <CardTitle className="text-2xl text-primary">{job.title}</CardTitle>
-                      <CardDescription>{job.company} • {job.location}</CardDescription>
-                    </div>
-                    <div className="text-right">
-                       <p className="text-lg font-semibold text-primary">{job.matchPercentage}%</p>
-                       <p className="text-sm text-muted-foreground">Match</p>
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-muted-foreground mb-4">{job.description}</p>
-                  <div className="space-y-3">
-                    <div>
-                      <h4 className="font-semibold mb-2 flex items-center"><CheckCircle className="text-green-500 mr-2 h-5 w-5" /> Skills you have ({job.matchedSkills.length})</h4>
-                      <div className="flex flex-wrap gap-2">
-                        {job.matchedSkills.map(s => <Badge key={s.id} variant="secondary">{s.name}</Badge>)}
-                      </div>
-                    </div>
-                    {job.missingSkills.length > 0 && (
-                      <div>
-                        <h4 className="font-semibold mb-2 flex items-center"><XCircle className="text-yellow-500 mr-2 h-5 w-5" /> To improve your match ({job.missingSkills.length})</h4>
-                         <div className="flex flex-wrap gap-2">
-                          {job.missingSkills.map(s => <Badge key={s.id} variant="outline">{s.name}</Badge>)}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        )}
-
         <div className="flex gap-4 mt-8">
             <Button onClick={restart} variant="outline"><RefreshCw className="mr-2 h-4 w-4" /> Try Again</Button>
             <Button onClick={shareOnLinkedIn}><Linkedin className="mr-2 h-4 w-4" /> Share Results</Button>
@@ -246,11 +213,11 @@ const Index = () => {
         </div>
         <Select value={location} onValueChange={setLocation}>
           <SelectTrigger>
-            <SelectValue placeholder="Select location (optional)" />
+            <SelectValue placeholder="Worldwide (or select country)" />
           </SelectTrigger>
           <SelectContent>
-            {ukLocations.map(loc => (
-              <SelectItem key={loc} value={loc}>{loc}</SelectItem>
+            {countries.map(country => (
+              <SelectItem key={country} value={country}>{country}</SelectItem>
             ))}
           </SelectContent>
         </Select>
