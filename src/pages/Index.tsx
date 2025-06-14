@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { ArrowLeft, ArrowRight, Linkedin, RefreshCw, MapPin, Loader } from 'lucide-react';
+import { ArrowLeft, ArrowRight, RefreshCw, MapPin, Loader, Download } from 'lucide-react';
 import { useJobs } from '@/hooks/useJobs';
 import { useSkillAssessment } from '@/hooks/useSkillAssessment';
 import skillsData from '@/skills.json';
@@ -162,6 +162,21 @@ const SkillSwipeApp = () => {
     window.open(linkedInUrl, '_blank');
   };
 
+  const exportJobsToTxt = () => {
+    if (realJobs.length === 0) return;
+    
+    const jobLinks = realJobs.map(job => job.applyUrl).join('\n');
+    const blob = new Blob([jobLinks], { type: 'text/plain' });
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `job-opportunities-${location.toLowerCase().replace(/\s+/g, '-')}.txt`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(url);
+  };
+
   // Country selection screen
   if (!countrySelected) {
     return (
@@ -274,7 +289,9 @@ const SkillSwipeApp = () => {
 
         <div className="flex gap-4 mt-8">
             <Button onClick={restart} variant="outline"><RefreshCw className="mr-2 h-4 w-4" /> Try Again</Button>
-            <Button onClick={shareOnLinkedIn}><Linkedin className="mr-2 h-4 w-4" /> Share Results</Button>
+            <Button onClick={exportJobsToTxt} disabled={realJobs.length === 0}>
+              <Download className="mr-2 h-4 w-4" /> Export jobs to .txt file
+            </Button>
         </div>
       </motion.div>
     );
