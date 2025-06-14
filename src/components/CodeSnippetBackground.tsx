@@ -218,7 +218,7 @@ export const CodeSnippetBackground: React.FC<CodeSnippetBackgroundProps> = ({ sk
   
   return (
     <div className="absolute inset-0 overflow-hidden rounded-2xl pointer-events-none">
-      <div className="absolute inset-0 opacity-10 blur-[2px]">
+      <div className="absolute inset-0 opacity-15 blur-[1px]">
         {Array.from({ length: 7 }).map((_, i) => (
           <p
             key={i}
