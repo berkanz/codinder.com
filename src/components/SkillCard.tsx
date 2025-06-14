@@ -34,7 +34,7 @@ const variants = {
     rotate: direction < 0 ? -30 : 30,
     transition: {
       duration: 0.5,
-      ease: [0.4, 0, 0.2, 1]
+      ease: "easeInOut"
     }
   }),
 };
@@ -73,8 +73,9 @@ export const SkillCard: React.FC<SkillCardProps> = ({ skillName, skillCategory, 
     <motion.div
       className={`absolute flex items-center justify-center w-[300px] h-[400px] rounded-2xl shadow-2xl cursor-grab ${getCardBackground(skillCategory)} overflow-hidden`}
       drag="x"
-      dragConstraints={{ left: -200, right: 200 }}
-      dragElastic={0.2}
+      dragConstraints={{ left: -300, right: 300 }}
+      dragElastic={0.1}
+      dragMomentum={false}
       onDragEnd={handleDragEnd}
       variants={variants}
       initial="enter"
@@ -82,9 +83,11 @@ export const SkillCard: React.FC<SkillCardProps> = ({ skillName, skillCategory, 
       exit="exit"
       custom={0}
       whileDrag={{
-        rotate: (_, info) => info.offset.x / 8,
         scale: 1.05,
         transition: { duration: 0 }
+      }}
+      style={{
+        rotate: 0
       }}
       transition={{ 
         type: 'spring', 
@@ -93,7 +96,14 @@ export const SkillCard: React.FC<SkillCardProps> = ({ skillName, skillCategory, 
       }}
     >
       {isTechSkill && <CodeSnippetBackground skillName={skillName} />}
-      <h2 className="relative text-3xl font-bold text-center p-4 text-primary-foreground">{skillName}</h2>
+      <motion.h2 
+        className="relative text-3xl font-bold text-center p-4 text-primary-foreground"
+        style={{
+          rotate: 0
+        }}
+      >
+        {skillName}
+      </motion.h2>
     </motion.div>
   );
 };
