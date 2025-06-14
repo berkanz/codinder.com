@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { motion, PanInfo } from 'framer-motion';
 import { CodeSnippetBackground } from './CodeSnippetBackground';
@@ -77,7 +78,7 @@ export const SkillCard: React.FC<SkillCardProps> = ({ skillName, skillCategory, 
       custom={0}
       transition={{ type: 'spring', stiffness: 300, damping: 30 }}
     >
-      {isTechSkill && <CodeSnippetBackground />}
+      {isTechSkill && <CodeSnippetBackground skillName={skillName} />}
       <h2 className="relative text-3xl font-bold text-center p-4 text-primary-foreground">{skillName}</h2>
     </motion.div>
   );
