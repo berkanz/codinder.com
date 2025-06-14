@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { motion, PanInfo } from 'framer-motion';
+import { motion, PanInfo, Variants } from 'framer-motion';
 import { CodeSnippetBackground } from './CodeSnippetBackground';
 
 interface SkillCardProps {
@@ -11,7 +11,7 @@ interface SkillCardProps {
 
 const SWIPE_CONFIDENCE_THRESHOLD = 10000;
 
-const variants = {
+const variants: Variants = {
   enter: {
     y: 100,
     opacity: 0,
@@ -34,7 +34,7 @@ const variants = {
     rotate: direction < 0 ? -30 : 30,
     transition: {
       duration: 0.5,
-      ease: "easeInOut"
+      ease: [0.42, 0, 0.58, 1] as const
     }
   }),
 };
@@ -85,7 +85,7 @@ export const SkillCard: React.FC<SkillCardProps> = ({ skillName, skillCategory, 
       whileDrag={{
         scale: 1.05,
         transition: { duration: 0 }
-      }}
+      } as const}
       style={{
         rotate: 0
       }}
