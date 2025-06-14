@@ -117,6 +117,8 @@ serve(async (req) => {
     const sort_by = searchParams.get('sort_by') || 'relevance';
     const country = searchParams.get('country') || '';
 
+    console.log('Received parameters:', { what, where, page, country });
+
     // Get API credentials from environment
     const appId = Deno.env.get('ADZUNA_APP_ID');
     const appKey = Deno.env.get('ADZUNA_APP_KEY');
@@ -132,13 +134,13 @@ serve(async (req) => {
       );
     }
 
-    // Determine country code - default to 'gb' if no country specified or country not found
-    let countryCode = 'gb';
+    // Determine country code - default to 'us' if no country specified or country not found
+    let countryCode = 'us'; // Changed default to US for worldwide
     if (country && countryCodeMap[country]) {
       countryCode = countryCodeMap[country];
     }
 
-    console.log('Using country code:', countryCode, 'for country:', country);
+    console.log('Using country code:', countryCode, 'for country:', country || 'worldwide');
 
     // Build Adzuna API URL with dynamic country
     const baseUrl = `https://api.adzuna.com/v1/api/jobs/${countryCode}/search`;

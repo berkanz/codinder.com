@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { SkillCard } from '@/components/SkillCard';
@@ -61,36 +62,6 @@ const Index = () => {
 
   const calculateJobMatches = async (currentSkills: Skill[]) => {
     console.log('Calculating job matches with skills:', currentSkills.map(s => s.name));
-    
-    const userSkillIds = new Set(currentSkills.map(s => s.id));
-
-    // Calculate matches from job profiles
-    const allJobsWithScores = jobProfiles.map(profile => {
-      const matchedSkillObjects = profile.requiredSkills
-        .map(id => skills.find(s => s.id === id))
-        .filter((s): s is Skill => s !== undefined && userSkillIds.has(s.id));
-
-      const missingSkillObjects = profile.requiredSkills
-        .map(id => skills.find(s => s.id === id))
-        .filter((s): s is Skill => s !== undefined && !userSkillIds.has(s.id));
-      
-      const matchPercentage = profile.requiredSkills.length > 0
-        ? Math.round((matchedSkillObjects.length / profile.requiredSkills.length) * 100)
-        : 0;
-
-      return {
-        ...profile,
-        matchPercentage,
-        matchedSkills: matchedSkillObjects,
-        missingSkills: missingSkillObjects,
-      };
-    });
-
-    const sortedJobs = allJobsWithScores
-      .filter(j => j.matchPercentage > 0)
-      .sort((a, b) => b.matchPercentage - a.matchPercentage || b.matchedSkills.length - a.matchedSkills.length);
-      
-    setMatchedJobs(sortedJobs.slice(0, 5));
 
     // Fetch real jobs based on top skills
     if (currentSkills.length > 0) {
@@ -100,11 +71,18 @@ const Index = () => {
         .join(' ');
       
       console.log('Searching real jobs with skills:', topSkillNames, 'location:', location);
-      await searchJobs({
+      
+      // Only pass country if a location is selected, otherwise let it default to UK for now
+      const searchParams: any = {
         what: topSkillNames,
-        country: location,
         page: 1,
-      });
+      };
+      
+      if (location) {
+        searchParams.country = location;
+      }
+      
+      await searchJobs(searchParams);
     }
   };
 
