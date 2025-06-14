@@ -31,6 +31,7 @@ const SkillSwipeApp = () => {
   const [showResults, setShowResults] = useState(false);
   const [direction, setDirection] = useState(0);
   const [location, setLocation] = useState('');
+  const [countrySelected, setCountrySelected] = useState(false);
   const { jobs: realJobs, loading: jobsLoading, searchJobs } = useJobs();
   const { 
     createAssessment, 
@@ -39,11 +40,13 @@ const SkillSwipeApp = () => {
     resetAssessment 
   } = useSkillAssessment();
 
-  // Initialize with 20 random skills on component mount
+  // Initialize with 20 random skills when country is selected
   useEffect(() => {
-    const randomSkills = getRandomSkills(allSkills, 20);
-    setSkills(randomSkills);
-  }, [allSkills]);
+    if (countrySelected && allSkills.length > 0) {
+      const randomSkills = getRandomSkills(allSkills, 20);
+      setSkills(randomSkills);
+    }
+  }, [countrySelected, allSkills]);
 
   const countries = [
     'United Kingdom', 'United States', 'Canada', 'Australia', 'Germany', 
@@ -70,18 +73,14 @@ const SkillSwipeApp = () => {
 
     // Fetch real jobs based on skills - focus on programming/tech jobs
     if (currentSkills.length > 0) {
-      // Get tech skills for search and add essential programming terms
       const techSkills = currentSkills.filter(skill => 
         skill.category === 'tech' || skill.category === 'data'
       );
       
-      // Create search terms focused on programming jobs
       let searchTerms = '';
       
       if (techSkills.length > 0) {
-        // Map skills to searchable terms and add programming-specific terms
         const skillTerms = techSkills.map(skill => {
-          // Map some skills to more searchable terms
           if (skill.name === 'Git & GitHub') return 'git';
           if (skill.name === 'Tailwind CSS') return 'tailwind';
           if (skill.name === 'UX/UI Design') return 'frontend developer';
@@ -89,14 +88,11 @@ const SkillSwipeApp = () => {
           return skill.name.toLowerCase();
         });
         
-        // Add essential programming terms to ensure we get tech jobs
         const programmingTerms = ['developer', 'programmer', 'software engineer', 'frontend', 'backend', 'fullstack'];
         const allTerms = [...skillTerms, ...programmingTerms];
         
-        // Use OR logic with programming-focused terms
         searchTerms = allTerms.join(' ');
       } else {
-        // Fallback for non-tech skills - still focus on programming
         searchTerms = 'developer programmer software engineer frontend backend';
       }
       
@@ -107,7 +103,6 @@ const SkillSwipeApp = () => {
         page: 1,
       };
       
-      // Add country if selected
       if (location) {
         searchParams.country = location;
         console.log('Setting country parameter to:', location);
@@ -150,10 +145,14 @@ const SkillSwipeApp = () => {
     setCurrentIndex(0);
     setMySkills([]);
     setShowResults(false);
+    setCountrySelected(false);
+    setLocation('');
     resetAssessment();
-    // Get new random skills for the next round
-    const randomSkills = getRandomSkills(allSkills, 20);
-    setSkills(randomSkills);
+  };
+
+  const handleCountrySelection = (selectedCountry: string) => {
+    setLocation(selectedCountry);
+    setCountrySelected(true);
   };
   
   const shareOnLinkedIn = () => {
@@ -163,6 +162,54 @@ const SkillSwipeApp = () => {
     const linkedInUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}&summary=${encodeURIComponent(text)}`;
     window.open(linkedInUrl, '_blank');
   };
+
+  // Country selection screen
+  if (!countrySelected) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen p-4">
+        <motion.div 
+          className="text-center max-w-md"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl mb-4">
+            Swipe Your Skill
+          </h1>
+          <p className="text-muted-foreground mb-8">
+            Discover your programming skills and find job opportunities tailored to your location.
+          </p>
+          
+          <div className="w-full mb-6">
+            <div className="flex items-center gap-2 mb-4">
+              <MapPin className="h-5 w-5 text-muted-foreground" />
+              <span className="text-lg font-medium">Select Your Job Location</span>
+            </div>
+            <Select value={location} onValueChange={handleCountrySelection}>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Choose a country to get started" />
+              </SelectTrigger>
+              <SelectContent>
+                {countries.map(country => (
+                  <SelectItem key={country} value={country}>{country}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          
+          {location && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="text-sm text-muted-foreground"
+            >
+              Ready to discover programming opportunities in {location}!
+            </motion.div>
+          )}
+        </motion.div>
+      </div>
+    );
+  }
 
   const currentSkill = skills[currentIndex];
 
@@ -175,7 +222,7 @@ const SkillSwipeApp = () => {
         transition={{ duration: 0.5 }}
       >
         <h1 className="text-4xl font-bold mb-2 text-primary">Your Job Matches</h1>
-        <p className="text-xl text-muted-foreground mb-8">Based on your {mySkills.length} skills, here are your opportunities.</p>
+        <p className="text-xl text-muted-foreground mb-8">Based on your {mySkills.length} skills, here are your opportunities in {location}.</p>
         
         {/* Real Job Opportunities */}
         {!jobsLoading && realJobs.length > 0 && (
@@ -225,24 +272,7 @@ const SkillSwipeApp = () => {
         Swipe Your Skill
       </h1>
       <p className="text-muted-foreground mb-6">Swipe right for "I have it", left for "I don't".</p>
-      
-      {/* Location Selector */}
-      <div className="mb-8 w-full max-w-sm">
-        <div className="flex items-center gap-2 mb-2">
-          <MapPin className="h-4 w-4 text-muted-foreground" />
-          <span className="text-sm font-medium">Preferred Job Location</span>
-        </div>
-        <Select value={location} onValueChange={setLocation}>
-          <SelectTrigger>
-            <SelectValue placeholder="Worldwide (or select country)" />
-          </SelectTrigger>
-          <SelectContent>
-            {countries.map(country => (
-              <SelectItem key={country} value={country}>{country}</SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
+      <p className="text-sm text-muted-foreground mb-8">Looking for jobs in: <strong>{location}</strong></p>
       
       <div className="relative w-[300px] h-[400px] mb-12">
         <AnimatePresence custom={direction}>
