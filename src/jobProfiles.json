@@ -1,33 +1,51 @@
 
 [
   {
-    "id": "frontend-developer",
+    "id": "frontend-developer-acme",
     "title": "Frontend Developer",
-    "description": "Builds the user-facing part of websites and web applications. You seem to have a knack for the technologies they use.",
+    "company": "Acme Inc.",
+    "location": "Remote",
+    "description": "Builds the user-facing part of websites and web applications using modern technologies.",
     "requiredSkills": [1, 7, 12, 14, 5]
   },
   {
-    "id": "product-manager",
+    "id": "product-manager-solutions",
     "title": "Product Manager",
-    "description": "Guides the success of a product and leads the cross-functional team that is responsible for improving it. Your skills align well with this role.",
+    "company": "Innovate Solutions",
+    "location": "New York, NY",
+    "description": "Guides the success of a product and leads the cross-functional team that is responsible for improving it.",
     "requiredSkills": [6, 15, 4, 11, 14]
   },
   {
-    "id": "ux-ui-designer",
-    "title": "UX/UI Designer",
-    "description": "Creates user-friendly interfaces that enable users to understand how to use complex technical products. Your design and user-centric skills are a great fit.",
-    "requiredSkills": [2, 14, 9, 13]
+    "id": "devops-engineer-cloudflow",
+    "title": "DevOps Engineer",
+    "company": "CloudFlow",
+    "location": "Austin, TX",
+    "description": "Manages cloud infrastructure and automates deployment pipelines for our growing platform.",
+    "requiredSkills": [3, 5, 12, 8, 10]
   },
   {
-    "id": "data-analyst",
+    "id": "data-analyst-datastream",
     "title": "Data Analyst",
-    "description": "Collects, cleans, and interprets data sets in order to answer a question or solve a problem. Your analytical skills are pointing in this direction.",
+    "company": "DataStream",
+    "location": "Remote",
+    "description": "Collects, cleans, and interprets data sets in order to answer a question or solve a problem.",
     "requiredSkills": [8, 11, 10, 6]
   },
   {
-    "id": "full-stack-developer",
+    "id": "full-stack-developer-techcorp",
     "title": "Full Stack Developer",
-    "description": "Works on both the front-end and back-end of an application. You have a solid mix of skills for this versatile role.",
+    "company": "TechCorp",
+    "location": "San Francisco, CA",
+    "description": "Works on both the front-end and back-end of an application, from database to UI.",
     "requiredSkills": [1, 5, 7, 8, 3, 12]
+  },
+  {
+    "id": "ux-ui-designer-pixelperfect",
+    "title": "UX/UI Designer",
+    "company": "PixelPerfect",
+    "location": "Remote",
+    "description": "Creates user-friendly interfaces that enable users to understand how to use complex technical products.",
+    "requiredSkills": [2, 14, 9, 13]
   }
 ]

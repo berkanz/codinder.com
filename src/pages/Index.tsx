@@ -4,7 +4,8 @@ import { SkillCard } from '@/components/SkillCard';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { ArrowLeft, ArrowRight, Linkedin, RefreshCw } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { ArrowLeft, ArrowRight, Linkedin, RefreshCw, CheckCircle, XCircle } from 'lucide-react';
 import skillsData from '@/skills.json';
 import jobProfilesData from '@/jobProfiles.json';
 
@@ -19,6 +20,14 @@ type JobProfile = {
   title: string;
   description: string;
   requiredSkills: number[];
+  company: string;
+  location: string;
+};
+
+type MatchedJob = JobProfile & {
+  matchPercentage: number;
+  matchedSkills: Skill[];
+  missingSkills: Skill[];
 };
 
 const Index = () => {
@@ -28,28 +37,37 @@ const Index = () => {
   const [mySkills, setMySkills] = useState<Skill[]>([]);
   const [showResults, setShowResults] = useState(false);
   const [direction, setDirection] = useState(0);
-  const [bestMatch, setBestMatch] = useState<JobProfile | null>(null);
+  const [matchedJobs, setMatchedJobs] = useState<MatchedJob[]>([]);
 
-  const calculateBestMatch = (currentSkills: Skill[]) => {
+  const calculateJobMatches = (currentSkills: Skill[]) => {
     const userSkillIds = new Set(currentSkills.map(s => s.id));
-    let bestProfile: JobProfile | null = null;
-    let maxMatchCount = -1;
 
-    jobProfiles.forEach(profile => {
-      const matchedSkills = profile.requiredSkills.filter(skillId => userSkillIds.has(skillId));
-      const matchCount = matchedSkills.length;
+    const allJobsWithScores = jobProfiles.map(profile => {
+      const matchedSkillObjects = profile.requiredSkills
+        .map(id => skills.find(s => s.id === id))
+        .filter((s): s is Skill => s !== undefined && userSkillIds.has(s.id));
 
-      if (matchCount > maxMatchCount) {
-        maxMatchCount = matchCount;
-        bestProfile = profile;
-      }
+      const missingSkillObjects = profile.requiredSkills
+        .map(id => skills.find(s => s.id === id))
+        .filter((s): s is Skill => s !== undefined && !userSkillIds.has(s.id));
+      
+      const matchPercentage = profile.requiredSkills.length > 0
+        ? Math.round((matchedSkillObjects.length / profile.requiredSkills.length) * 100)
+        : 0;
+
+      return {
+        ...profile,
+        matchPercentage,
+        matchedSkills: matchedSkillObjects,
+        missingSkills: missingSkillObjects,
+      };
     });
 
-    if (bestProfile && maxMatchCount > 0) {
-      setBestMatch(bestProfile);
-    } else {
-      setBestMatch(null);
-    }
+    const sortedJobs = allJobsWithScores
+      .filter(j => j.matchPercentage > 0)
+      .sort((a, b) => b.matchPercentage - a.matchPercentage || b.matchedSkills.length - a.matchedSkills.length);
+      
+    setMatchedJobs(sortedJobs.slice(0, 5));
   };
 
   const handleSwipe = (dir: 'left' | 'right') => {
@@ -65,7 +83,7 @@ const Index = () => {
 
     const nextIndex = currentIndex + 1;
     if (nextIndex >= skills.length) {
-      calculateBestMatch(updatedMySkills);
+      calculateJobMatches(updatedMySkills);
       setTimeout(() => setShowResults(true), 300);
     }
     setCurrentIndex(nextIndex);
@@ -75,7 +93,7 @@ const Index = () => {
     setCurrentIndex(0);
     setMySkills([]);
     setShowResults(false);
-    setBestMatch(null);
+    setMatchedJobs([]);
   };
   
   const shareOnLinkedIn = () => {
@@ -89,47 +107,61 @@ const Index = () => {
   const currentSkill = skills[currentIndex];
 
   if (showResults) {
-    const percentage = Math.round((mySkills.length / skills.length) * 100);
     return (
       <motion.div 
-        className="flex flex-col items-center justify-center min-h-screen text-center p-4"
+        className="flex flex-col items-center justify-center min-h-screen text-center p-4 md:p-8"
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.5 }}
       >
-        <h1 className="text-4xl font-bold mb-2 text-primary">Your Skill Profile</h1>
-        <p className="text-xl text-muted-foreground mb-6">You have {mySkills.length} out of {skills.length} skills.</p>
+        <h1 className="text-4xl font-bold mb-2 text-primary">Your Job Matches</h1>
+        <p className="text-xl text-muted-foreground mb-8">Based on your {mySkills.length} skills, here are your top opportunities.</p>
         
-        <div className="w-full max-w-md mb-6">
-          <div className="flex justify-between mb-1">
-             <span className="text-base font-medium text-primary">{percentage}% Match</span>
+        {matchedJobs.length > 0 ? (
+          <div className="w-full max-w-2xl space-y-6">
+            {matchedJobs.map(job => (
+              <Card key={job.id} className="text-left bg-card border-primary/20 hover:border-primary/50 transition-all">
+                <CardHeader>
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <CardTitle className="text-2xl text-primary">{job.title}</CardTitle>
+                      <CardDescription>{job.company} • {job.location}</CardDescription>
+                    </div>
+                    <div className="text-right">
+                       <p className="text-lg font-semibold text-primary">{job.matchPercentage}%</p>
+                       <p className="text-sm text-muted-foreground">Match</p>
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-muted-foreground mb-4">{job.description}</p>
+                  <div className="space-y-3">
+                    <div>
+                      <h4 className="font-semibold mb-2 flex items-center"><CheckCircle className="text-green-500 mr-2 h-5 w-5" /> Skills you have ({job.matchedSkills.length})</h4>
+                      <div className="flex flex-wrap gap-2">
+                        {job.matchedSkills.map(s => <Badge key={s.id} variant="secondary">{s.name}</Badge>)}
+                      </div>
+                    </div>
+                    {job.missingSkills.length > 0 && (
+                      <div>
+                        <h4 className="font-semibold mb-2 flex items-center"><XCircle className="text-yellow-500 mr-2 h-5 w-5" /> To improve your match ({job.missingSkills.length})</h4>
+                         <div className="flex flex-wrap gap-2">
+                          {job.missingSkills.map(s => <Badge key={s.id} variant="outline">{s.name}</Badge>)}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
           </div>
-          <Progress value={percentage} className="w-full h-4" />
-        </div>
-
-        {bestMatch && (
-          <Card className="w-full max-w-md mb-6 bg-card border-primary/50 text-left">
-            <CardHeader>
-              <CardTitle className="text-2xl text-primary">Your Top Role Match</CardTitle>
-              <CardDescription>Based on your skills, this could be a great fit for you!</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <h3 className="text-xl font-semibold text-card-foreground">{bestMatch.title}</h3>
-              <p className="text-muted-foreground mt-1">{bestMatch.description}</p>
-            </CardContent>
-          </Card>
+        ) : (
+          <p className="text-muted-foreground">No job matches found based on your skills. Try again!</p>
         )}
 
-        <div className="mb-8 text-left max-w-md w-full">
-            <h3 className="text-lg font-semibold mb-2">Skills you have:</h3>
-            <ul className="list-disc list-inside text-muted-foreground">
-                {mySkills.length > 0 ? mySkills.map(s => <li key={s.id}>{s.name}</li>) : <li>None yet!</li>}
-            </ul>
-        </div>
-        
-        <div className="flex gap-4">
+        <div className="flex gap-4 mt-8">
             <Button onClick={restart} variant="outline"><RefreshCw className="mr-2 h-4 w-4" /> Try Again</Button>
-            <Button onClick={shareOnLinkedIn}><Linkedin className="mr-2 h-4 w-4" /> Share on LinkedIn</Button>
+            <Button onClick={shareOnLinkedIn}><Linkedin className="mr-2 h-4 w-4" /> Share Results</Button>
         </div>
       </motion.div>
     );
