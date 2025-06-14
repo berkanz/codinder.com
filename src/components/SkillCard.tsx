@@ -1,5 +1,6 @@
 import React from 'react';
 import { motion, PanInfo } from 'framer-motion';
+import { CodeSnippetBackground } from './CodeSnippetBackground';
 
 interface SkillCardProps {
   skillName: string;
@@ -60,9 +61,11 @@ export const SkillCard: React.FC<SkillCardProps> = ({ skillName, skillCategory, 
     }
   };
 
+  const isTechSkill = skillCategory === 'tech' || skillCategory === 'data';
+
   return (
     <motion.div
-      className={`absolute flex items-center justify-center w-[300px] h-[400px] rounded-2xl shadow-2xl cursor-grab ${getCardBackground(skillCategory)}`}
+      className={`absolute flex items-center justify-center w-[300px] h-[400px] rounded-2xl shadow-2xl cursor-grab ${getCardBackground(skillCategory)} overflow-hidden`}
       drag="x"
       dragConstraints={{ left: 0, right: 0 }}
       dragElastic={1}
@@ -74,7 +77,8 @@ export const SkillCard: React.FC<SkillCardProps> = ({ skillName, skillCategory, 
       custom={0}
       transition={{ type: 'spring', stiffness: 300, damping: 30 }}
     >
-      <h2 className="text-3xl font-bold text-center p-4 text-primary-foreground">{skillName}</h2>
+      {isTechSkill && <CodeSnippetBackground />}
+      <h2 className="relative text-3xl font-bold text-center p-4 text-primary-foreground">{skillName}</h2>
     </motion.div>
   );
 };

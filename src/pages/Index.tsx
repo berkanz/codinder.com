@@ -33,19 +33,19 @@ const Index = () => {
   const calculateBestMatch = (currentSkills: Skill[]) => {
     const userSkillIds = new Set(currentSkills.map(s => s.id));
     let bestProfile: JobProfile | null = null;
-    let maxMatchScore = -1;
+    let maxMatchCount = -1;
 
     jobProfiles.forEach(profile => {
       const matchedSkills = profile.requiredSkills.filter(skillId => userSkillIds.has(skillId));
-      const matchScore = matchedSkills.length / profile.requiredSkills.length;
+      const matchCount = matchedSkills.length;
 
-      if (matchScore > maxMatchScore) {
-        maxMatchScore = matchScore;
+      if (matchCount > maxMatchCount) {
+        maxMatchCount = matchCount;
         bestProfile = profile;
       }
     });
 
-    if (bestProfile && maxMatchScore > 0) {
+    if (bestProfile && maxMatchCount > 0) {
       setBestMatch(bestProfile);
     } else {
       setBestMatch(null);
