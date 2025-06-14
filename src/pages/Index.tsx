@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { SkillCard } from '@/components/SkillCard';
@@ -213,7 +214,7 @@ const SkillSwipeApp = () => {
                 {countries.map(country => (
                   <SelectItem key={country.code} value={country.name}>{country.name}</SelectItem>
                 ))}
-                <SelectItem value="" disabled className="text-muted-foreground">
+                <SelectItem value="other_countries_disabled" disabled className="text-muted-foreground">
                   Other countries not yet available
                 </SelectItem>
               </SelectContent>
