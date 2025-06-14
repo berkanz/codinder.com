@@ -1,0 +1,18 @@
+
+[
+  { "id": 1, "name": "React" },
+  { "id": 2, "name": "Figma" },
+  { "id": 3, "name": "Docker" },
+  { "id": 4, "name": "Public Speaking" },
+  { "id": 5, "name": "Node.js" },
+  { "id": 6, "name": "Project Management" },
+  { "id": 7, "name": "Tailwind CSS" },
+  { "id": 8, "name": "SQL" },
+  { "id": 9, "name": "Content Creation" },
+  { "id": 10, "name": "Python" },
+  { "id": 11, "name": "Data Analysis" },
+  { "id": 12, "name": "Git & GitHub" },
+  { "id": 13, "name": "SEO" },
+  { "id": 14, "name": "UX/UI Design" },
+  { "id": 15, "name": "Product-Led Growth" }
+]
