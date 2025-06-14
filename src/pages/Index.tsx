@@ -197,14 +197,14 @@ const SkillSwipeApp = () => {
             <img 
               src="/lovable-uploads/ceaabc34-8495-41f4-8c5c-7ddf246ec2c3.png" 
               alt="Codinder Logo" 
-              className="w-32 h-32 mx-auto mb-4"
+              className="w-64 h-64 mx-auto mb-4"
             />
           </div>
           <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl mb-4">
-            Swipe Your Skill
+            Swipe Your Skills
           </h1>
           <p className="text-muted-foreground mb-8">
-            Discover your programming skills and find job opportunities tailored to your location.
+            Pick your stack and find job opportunities tailored to your skills and location.
           </p>
           
           <div className="w-full mb-6">
@@ -316,7 +316,7 @@ const SkillSwipeApp = () => {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen overflow-hidden">
       <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl mb-4 text-center">
-        Swipe Your Skill
+        Swipe Your Skills
       </h1>
       <p className="text-muted-foreground mb-6">Swipe right for "I have it", left for "I don't".</p>
       <p className="text-sm text-muted-foreground mb-8">Looking for jobs in: <strong>{location}</strong></p>
