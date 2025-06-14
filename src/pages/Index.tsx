@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { SkillCard } from '@/components/SkillCard';
@@ -6,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { ArrowLeft, ArrowRight, Linkedin, RefreshCw, MapPin } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Linkedin, RefreshCw, MapPin, Loader } from 'lucide-react';
 import { useJobs } from '@/hooks/useJobs';
 import { useSkillAssessment } from '@/hooks/useSkillAssessment';
 import skillsData from '@/skills.json';
@@ -224,6 +223,14 @@ const SkillSwipeApp = () => {
         <h1 className="text-4xl font-bold mb-2 text-primary">Your Job Matches</h1>
         <p className="text-xl text-muted-foreground mb-8">Based on your {mySkills.length} skills, here are your opportunities in {location}.</p>
         
+        {/* Loading spinner while jobs are being fetched */}
+        {jobsLoading && (
+          <div className="flex flex-col items-center justify-center mb-8">
+            <Loader className="h-8 w-8 animate-spin text-primary mb-4" />
+            <p className="text-muted-foreground">Finding programming jobs for you...</p>
+          </div>
+        )}
+
         {/* Real Job Opportunities */}
         {!jobsLoading && realJobs.length > 0 && (
           <div className="w-full max-w-4xl mb-8">
@@ -255,6 +262,13 @@ const SkillSwipeApp = () => {
                 </Card>
               ))}
             </div>
+          </div>
+        )}
+
+        {/* Show message if no jobs found and not loading */}
+        {!jobsLoading && realJobs.length === 0 && (
+          <div className="text-center mb-8">
+            <p className="text-muted-foreground">No programming jobs found for your location. Try selecting a different country.</p>
           </div>
         )}
 

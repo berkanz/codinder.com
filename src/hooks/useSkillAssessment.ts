@@ -1,7 +1,6 @@
 
 import { useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { useToast } from '@/hooks/use-toast';
 
 interface Skill {
   id: number;
@@ -26,7 +25,6 @@ export const useSkillAssessment = () => {
   const [currentSessionId, setCurrentSessionId] = useState<string | null>(null);
   const [matchedSkills, setMatchedSkills] = useState<Skill[]>([]);
   const [jobsSaved, setJobsSaved] = useState(false);
-  const { toast } = useToast();
 
   const createSession = async (totalSkills: number, location: string) => {
     try {
@@ -52,11 +50,6 @@ export const useSkillAssessment = () => {
       return data.id;
     } catch (error: any) {
       console.error('Error creating session:', error);
-      toast({
-        title: "Error",
-        description: "Failed to create skill session",
-        variant: "destructive",
-      });
       return null;
     }
   };
@@ -87,11 +80,6 @@ export const useSkillAssessment = () => {
       console.log('Added skill match:', skill.name);
     } catch (error: any) {
       console.error('Error adding skill match:', error);
-      toast({
-        title: "Error",
-        description: "Failed to save skill match",
-        variant: "destructive",
-      });
     }
   };
 
@@ -119,18 +107,8 @@ export const useSkillAssessment = () => {
       
       setJobsSaved(true);
       console.log('Saved', jobs.length, 'job matches');
-      
-      toast({
-        title: "Assessment Saved",
-        description: `Your skill assessment and ${jobs.length} job matches have been saved!`,
-      });
     } catch (error: any) {
       console.error('Error saving job matches:', error);
-      toast({
-        title: "Error",
-        description: "Failed to save job matches",
-        variant: "destructive",
-      });
     }
   };
 
