@@ -1,0 +1,148 @@
+
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
+
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+}
+
+interface AdzunaJob {
+  id: string;
+  title: string;
+  company: {
+    display_name: string;
+  };
+  location: {
+    display_name: string;
+  };
+  description: string;
+  salary_min?: number;
+  salary_max?: number;
+  created: string;
+  redirect_url: string;
+  category: {
+    label: string;
+    tag: string;
+  };
+}
+
+interface AdzunaResponse {
+  results: AdzunaJob[];
+  count: number;
+}
+
+serve(async (req) => {
+  // Handle CORS preflight requests
+  if (req.method === 'OPTIONS') {
+    return new Response(null, { headers: corsHeaders });
+  }
+
+  try {
+    console.log('Fetch jobs function called');
+    
+    const { searchParams } = new URL(req.url);
+    const what = searchParams.get('what') || '';
+    const where = searchParams.get('where') || '';
+    const page = parseInt(searchParams.get('page') || '1');
+    const results_per_page = parseInt(searchParams.get('results_per_page') || '20');
+    const salary_min = searchParams.get('salary_min');
+    const sort_by = searchParams.get('sort_by') || 'relevance';
+
+    // Get API credentials from environment
+    const appId = Deno.env.get('ADZUNA_APP_ID');
+    const appKey = Deno.env.get('ADZUNA_APP_KEY');
+
+    if (!appId || !appKey) {
+      console.error('Missing Adzuna API credentials');
+      return new Response(
+        JSON.stringify({ error: 'API credentials not configured' }),
+        { 
+          status: 500, 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        }
+      );
+    }
+
+    // Build Adzuna API URL
+    const baseUrl = 'https://api.adzuna.com/v1/api/jobs/gb/search';
+    const url = new URL(`${baseUrl}/${page}`);
+    
+    url.searchParams.set('app_id', appId);
+    url.searchParams.set('app_key', appKey);
+    url.searchParams.set('results_per_page', results_per_page.toString());
+    url.searchParams.set('content-type', 'application/json');
+    
+    if (what) url.searchParams.set('what', what);
+    if (where) url.searchParams.set('where', where);
+    if (salary_min) url.searchParams.set('salary_min', salary_min);
+    if (sort_by) url.searchParams.set('sort_by', sort_by);
+
+    console.log('Calling Adzuna API:', url.toString().replace(appKey, '***'));
+
+    // Fetch from Adzuna API
+    const response = await fetch(url.toString());
+    
+    if (!response.ok) {
+      console.error('Adzuna API error:', response.status, response.statusText);
+      const errorText = await response.text();
+      console.error('Error details:', errorText);
+      
+      return new Response(
+        JSON.stringify({ 
+          error: 'Failed to fetch jobs from Adzuna',
+          details: `${response.status}: ${response.statusText}`
+        }),
+        { 
+          status: response.status, 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        }
+      );
+    }
+
+    const data: AdzunaResponse = await response.json();
+    console.log(`Successfully fetched ${data.results?.length || 0} jobs from Adzuna`);
+
+    // Transform the data to match our expected format
+    const transformedJobs = data.results?.map(job => ({
+      id: job.id,
+      title: job.title,
+      company: job.company?.display_name || 'Unknown Company',
+      location: job.location?.display_name || 'Unknown Location',
+      description: job.description || '',
+      salary: job.salary_min && job.salary_max 
+        ? `£${job.salary_min.toLocaleString()} - £${job.salary_max.toLocaleString()}`
+        : job.salary_min 
+        ? `£${job.salary_min.toLocaleString()}+`
+        : 'Salary not specified',
+      postedDate: new Date(job.created).toLocaleDateString(),
+      applyUrl: job.redirect_url,
+      category: job.category?.label || 'General',
+      requiredSkills: [] // Adzuna doesn't provide structured skills data
+    })) || [];
+
+    return new Response(
+      JSON.stringify({
+        jobs: transformedJobs,
+        total: data.count || 0,
+        page,
+        totalPages: Math.ceil((data.count || 0) / results_per_page)
+      }),
+      { 
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      }
+    );
+
+  } catch (error) {
+    console.error('Error in fetch-jobs function:', error);
+    return new Response(
+      JSON.stringify({ 
+        error: 'Internal server error',
+        details: error.message
+      }),
+      { 
+        status: 500, 
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      }
+    );
+  }
+});

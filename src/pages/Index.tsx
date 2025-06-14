@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { SkillCard } from '@/components/SkillCard';
@@ -5,7 +6,8 @@ import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, ArrowRight, Linkedin, RefreshCw, CheckCircle, XCircle } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Linkedin, RefreshCw, CheckCircle, XCircle, Search } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import skillsData from '@/skills.json';
 import jobProfilesData from '@/jobProfiles.json';
 
@@ -162,6 +164,11 @@ const Index = () => {
         <div className="flex gap-4 mt-8">
             <Button onClick={restart} variant="outline"><RefreshCw className="mr-2 h-4 w-4" /> Try Again</Button>
             <Button onClick={shareOnLinkedIn}><Linkedin className="mr-2 h-4 w-4" /> Share Results</Button>
+            <Button asChild variant="default">
+              <Link to="/jobs">
+                <Search className="mr-2 h-4 w-4" /> Browse Real Jobs
+              </Link>
+            </Button>
         </div>
       </motion.div>
     );
@@ -172,7 +179,15 @@ const Index = () => {
       <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl mb-4 text-center">
         Swipe Your Skill
       </h1>
-      <p className="text-muted-foreground mb-12">Swipe right for "I have it", left for "I don't".</p>
+      <p className="text-muted-foreground mb-4">Swipe right for "I have it", left for "I don't".</p>
+      
+      <div className="mb-8">
+        <Button asChild variant="outline">
+          <Link to="/jobs">
+            <Search className="mr-2 h-4 w-4" /> Browse Real Jobs
+          </Link>
+        </Button>
+      </div>
       
       <div className="relative w-[300px] h-[400px] mb-12">
         <AnimatePresence custom={direction}>
