@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { SkillCard } from '@/components/SkillCard';
@@ -21,6 +20,35 @@ type Skill = {
 const getRandomSkills = (allSkills: Skill[], count: number): Skill[] => {
   const shuffled = [...allSkills].sort(() => 0.5 - Math.random());
   return shuffled.slice(0, count);
+};
+
+const Footer = () => {
+  return (
+    <footer className="w-full py-4 mt-8 border-t bg-background">
+      <div className="container mx-auto px-4 text-center">
+        <p className="text-sm text-muted-foreground">
+          Developed by{' '}
+          <a 
+            href="https://github.com/berkanz" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="text-primary hover:underline font-medium"
+          >
+            berkanz
+          </a>
+          {' '}and{' '}
+          <a 
+            href="https://lovable.dev" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="text-primary hover:underline font-medium"
+          >
+            Lovable
+          </a>
+        </p>
+      </div>
+    </footer>
+  );
 };
 
 const SkillSwipeApp = () => {
@@ -191,57 +219,60 @@ const SkillSwipeApp = () => {
   // Country selection screen
   if (!countrySelected) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen p-4">
-        <motion.div 
-          className="text-center max-w-md"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-        >
-          <div className="mb-6">
-            <img 
-              src="/lovable-uploads/ceaabc34-8495-41f4-8c5c-7ddf246ec2c3.png" 
-              alt="Codinder Logo" 
-              className="w-64 h-64 mx-auto mb-4"
-            />
-          </div>
-          <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl mb-4">
-            Swipe Your Skills
-          </h1>
-          <p className="text-muted-foreground mb-8">
-            Pick your stack and find job opportunities tailored to your skills and location.
-          </p>
-          
-          <div className="w-full mb-6">
-            <div className="flex items-center gap-2 mb-4">
-              <MapPin className="h-5 w-5 text-muted-foreground" />
-              <span className="text-lg font-medium">Select Your Job Location</span>
+      <div className="min-h-screen flex flex-col">
+        <div className="flex-1 flex flex-col items-center justify-center p-4">
+          <motion.div 
+            className="text-center max-w-md"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <div className="mb-6">
+              <img 
+                src="/lovable-uploads/ceaabc34-8495-41f4-8c5c-7ddf246ec2c3.png" 
+                alt="Codinder Logo" 
+                className="w-64 h-64 mx-auto mb-4"
+              />
             </div>
-            <Select value={location} onValueChange={handleCountrySelection}>
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder="Choose a country to get started" />
-              </SelectTrigger>
-              <SelectContent>
-                {countries.map(country => (
-                  <SelectItem key={country.code} value={country.name}>{country.name}</SelectItem>
-                ))}
-                <SelectItem value="other_countries_disabled" disabled className="text-muted-foreground">
-                  Other countries not yet available
-                </SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          
-          {location && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="text-sm text-muted-foreground"
-            >
-              Ready to discover programming opportunities in {location}!
-            </motion.div>
-          )}
-        </motion.div>
+            <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl mb-4">
+              Swipe Your Skills
+            </h1>
+            <p className="text-muted-foreground mb-8">
+              Pick your stack and find job opportunities tailored to your skills and location.
+            </p>
+            
+            <div className="w-full mb-6">
+              <div className="flex items-center gap-2 mb-4">
+                <MapPin className="h-5 w-5 text-muted-foreground" />
+                <span className="text-lg font-medium">Select Your Job Location</span>
+              </div>
+              <Select value={location} onValueChange={handleCountrySelection}>
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Choose a country to get started" />
+                </SelectTrigger>
+                <SelectContent>
+                  {countries.map(country => (
+                    <SelectItem key={country.code} value={country.name}>{country.name}</SelectItem>
+                  ))}
+                  <SelectItem value="other_countries_disabled" disabled className="text-muted-foreground">
+                    Other countries not yet available
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            
+            {location && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="text-sm text-muted-foreground"
+              >
+                Ready to discover programming opportunities in {location}!
+              </motion.div>
+            )}
+          </motion.div>
+        </div>
+        <Footer />
       </div>
     );
   }
@@ -250,128 +281,134 @@ const SkillSwipeApp = () => {
 
   if (showResults) {
     return (
-      <motion.div 
-        className="flex flex-col items-center justify-center min-h-screen text-center p-4 md:p-8"
-        initial={{ opacity: 0, scale: 0.9 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.5 }}
-      >
-        {/* Show message when no skills are selected */}
-        {mySkills.length === 0 ? (
-          <div className="max-w-md">
-            <h1 className="text-4xl font-bold mb-4 text-primary">Oops!</h1>
-            <p className="text-xl text-muted-foreground mb-8">
-              You didn't pick any of the skills, I can't find a job for you now. Expand your tech stack my friend!
-            </p>
-            <Button onClick={restart} variant="outline">
-              <RefreshCw className="mr-2 h-4 w-4" /> Try Again
-            </Button>
-          </div>
-        ) : (
-          <>
-            <h1 className="text-4xl font-bold mb-2 text-primary">Your Job Matches</h1>
-            <p className="text-xl text-muted-foreground mb-8">Based on your {mySkills.length} skills, here are your opportunities in {location}.</p>
-            
-            {/* Loading spinner while jobs are being fetched */}
-            {jobsLoading && (
-              <div className="flex flex-col items-center justify-center mb-8">
-                <Loader className="h-8 w-8 animate-spin text-primary mb-4" />
-                <p className="text-muted-foreground">Finding programming jobs for you...</p>
-              </div>
-            )}
-
-            {/* Real Job Opportunities */}
-            {!jobsLoading && realJobs.length > 0 && (
-              <div className="w-full max-w-4xl mb-8">
-                <h2 className="text-2xl font-semibold mb-4 text-primary">Programming Job Opportunities for You</h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                  {realJobs.map(job => (
-                    <Card key={job.id} className="text-left bg-card border-primary/20 hover:border-primary/50 transition-all">
-                      <CardHeader>
-                        <CardTitle className="text-lg">{job.title}</CardTitle>
-                        <CardDescription>{job.company} • {job.location}</CardDescription>
-                      </CardHeader>
-                      <CardContent>
-                        <div className="space-y-2">
-                          <p className="text-sm text-muted-foreground">{job.salary}</p>
-                          <Badge variant="secondary">{job.category}</Badge>
-                          <p className="text-sm text-muted-foreground line-clamp-2">{job.description}</p>
-                          <Button
-                            asChild
-                            variant="outline"
-                            size="sm"
-                            className="w-full"
-                          >
-                            <a href={job.applyUrl} target="_blank" rel="noopener noreferrer">
-                              Apply Now
-                            </a>
-                          </Button>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Show message if no jobs found and not loading */}
-            {!jobsLoading && realJobs.length === 0 && (
-              <div className="text-center mb-8">
-                <p className="text-muted-foreground">No programming jobs found for your location. Try selecting a different country.</p>
-              </div>
-            )}
-
-            <div className="flex gap-4 mt-8">
-                <Button onClick={restart} variant="outline"><RefreshCw className="mr-2 h-4 w-4" /> Try Again</Button>
-                <Button onClick={exportJobsToTxt} disabled={realJobs.length === 0}>
-                  <Download className="mr-2 h-4 w-4" /> Export jobs to .txt file
-                </Button>
+      <div className="min-h-screen flex flex-col">
+        <motion.div 
+          className="flex-1 flex flex-col items-center justify-center text-center p-4 md:p-8"
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.5 }}
+        >
+          {/* Show message when no skills are selected */}
+          {mySkills.length === 0 ? (
+            <div className="max-w-md">
+              <h1 className="text-4xl font-bold mb-4 text-primary">Oops!</h1>
+              <p className="text-xl text-muted-foreground mb-8">
+                You didn't pick any of the skills, I can't find a job for you now. Expand your tech stack my friend!
+              </p>
+              <Button onClick={restart} variant="outline">
+                <RefreshCw className="mr-2 h-4 w-4" /> Try Again
+              </Button>
             </div>
-          </>
-        )}
-      </motion.div>
+          ) : (
+            <>
+              <h1 className="text-4xl font-bold mb-2 text-primary">Your Job Matches</h1>
+              <p className="text-xl text-muted-foreground mb-8">Based on your {mySkills.length} skills, here are your opportunities in {location}.</p>
+              
+              {/* Loading spinner while jobs are being fetched */}
+              {jobsLoading && (
+                <div className="flex flex-col items-center justify-center mb-8">
+                  <Loader className="h-8 w-8 animate-spin text-primary mb-4" />
+                  <p className="text-muted-foreground">Finding programming jobs for you...</p>
+                </div>
+              )}
+
+              {/* Real Job Opportunities */}
+              {!jobsLoading && realJobs.length > 0 && (
+                <div className="w-full max-w-4xl mb-8">
+                  <h2 className="text-2xl font-semibold mb-4 text-primary">Programming Job Opportunities for You</h2>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                    {realJobs.map(job => (
+                      <Card key={job.id} className="text-left bg-card border-primary/20 hover:border-primary/50 transition-all">
+                        <CardHeader>
+                          <CardTitle className="text-lg">{job.title}</CardTitle>
+                          <CardDescription>{job.company} • {job.location}</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                          <div className="space-y-2">
+                            <p className="text-sm text-muted-foreground">{job.salary}</p>
+                            <Badge variant="secondary">{job.category}</Badge>
+                            <p className="text-sm text-muted-foreground line-clamp-2">{job.description}</p>
+                            <Button
+                              asChild
+                              variant="outline"
+                              size="sm"
+                              className="w-full"
+                            >
+                              <a href={job.applyUrl} target="_blank" rel="noopener noreferrer">
+                                Apply Now
+                              </a>
+                            </Button>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Show message if no jobs found and not loading */}
+              {!jobsLoading && realJobs.length === 0 && (
+                <div className="text-center mb-8">
+                  <p className="text-muted-foreground">No programming jobs found for your location. Try selecting a different country.</p>
+                </div>
+              )}
+
+              <div className="flex gap-4 mt-8">
+                  <Button onClick={restart} variant="outline"><RefreshCw className="mr-2 h-4 w-4" /> Try Again</Button>
+                  <Button onClick={exportJobsToTxt} disabled={realJobs.length === 0}>
+                    <Download className="mr-2 h-4 w-4" /> Export jobs to .txt file
+                  </Button>
+              </div>
+            </>
+          )}
+        </motion.div>
+        <Footer />
+      </div>
     );
   }
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen overflow-hidden">
-      <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl mb-4 text-center">
-        Swipe Your Skills
-      </h1>
-      <p className="text-muted-foreground mb-6">Swipe right for "I have it", left for "I don't".</p>
-      <p className="text-sm text-muted-foreground mb-8">Looking for jobs in: <strong>{location}</strong></p>
-      
-      <div className="relative w-[300px] h-[400px] mb-12">
-        <AnimatePresence custom={direction}>
-          {currentSkill && (
-            <SkillCard
-              key={currentIndex}
-              skillName={currentSkill.name}
-              skillCategory={currentSkill.category}
-              onSwipe={(dir) => handleSwipe(dir)}
-            />
-          )}
-        </AnimatePresence>
-      </div>
+    <div className="min-h-screen flex flex-col">
+      <div className="flex-1 flex flex-col items-center justify-center overflow-hidden">
+        <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl mb-4 text-center">
+          Swipe Your Skills
+        </h1>
+        <p className="text-muted-foreground mb-6">Swipe right for "I have it", left for "I don't".</p>
+        <p className="text-sm text-muted-foreground mb-8">Looking for jobs in: <strong>{location}</strong></p>
+        
+        <div className="relative w-[300px] h-[400px] mb-12">
+          <AnimatePresence custom={direction}>
+            {currentSkill && (
+              <SkillCard
+                key={currentIndex}
+                skillName={currentSkill.name}
+                skillCategory={currentSkill.category}
+                onSwipe={(dir) => handleSwipe(dir)}
+              />
+            )}
+          </AnimatePresence>
+        </div>
 
-      <div className="flex items-center gap-8">
-        <Button 
-          variant="outline" 
-          size="lg" 
-          className="rounded-full w-20 h-20 bg-red-500/10 border-red-500/30 text-red-500 hover:bg-red-500/20"
-          onClick={() => handleSwipe('left')}
-        >
-          <ArrowLeft size={32} />
-        </Button>
-        <Button 
-          variant="outline" 
-          size="lg" 
-          className="rounded-full w-20 h-20 bg-green-500/10 border-green-500/30 text-green-500 hover:bg-green-500/20"
-          onClick={() => handleSwipe('right')}
-        >
-          <ArrowRight size={32} />
-        </Button>
+        <div className="flex items-center gap-8">
+          <Button 
+            variant="outline" 
+            size="lg" 
+            className="rounded-full w-20 h-20 bg-red-500/10 border-red-500/30 text-red-500 hover:bg-red-500/20"
+            onClick={() => handleSwipe('left')}
+          >
+            <ArrowLeft size={32} />
+          </Button>
+          <Button 
+            variant="outline" 
+            size="lg" 
+            className="rounded-full w-20 h-20 bg-green-500/10 border-green-500/30 text-green-500 hover:bg-green-500/20"
+            onClick={() => handleSwipe('right')}
+          >
+            <ArrowRight size={32} />
+          </Button>
+        </div>
       </div>
+      <Footer />
     </div>
   );
 };
