@@ -69,7 +69,19 @@ const getCodeSnippets = (skillName: string): string[] => {
     ];
   }
   
-  if (skill.includes('sql')) {
+  if (skill.includes('rust')) {
+    return [
+      "fn main() {",
+      "    println!(\"Hello, world!\");",
+      "}",
+      "let mut x = 5;",
+      "struct Point { x: i32, y: i32 }",
+      "impl Point { fn new() -> Self {} }",
+      "match result { Ok(val) => val, Err(e) => panic!() }"
+    ];
+  }
+  
+  if (skill.includes('sql') || skill.includes('postgresql') || skill.includes('mysql')) {
     return [
       "SELECT id, name FROM users;",
       "WHERE created_at > '2024-01-01'",
@@ -126,6 +138,66 @@ const getCodeSnippets = (skillName: string): string[] => {
       "transition: all 0.3s ease;",
       "@media (max-width: 768px) {",
       "grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));"
+    ];
+  }
+  
+  if (skill.includes('java')) {
+    return [
+      "public class Main {",
+      "    public static void main(String[] args) {",
+      "        System.out.println(\"Hello World\");",
+      "    }",
+      "}",
+      "private int count = 0;",
+      "List<String> items = new ArrayList<>();"
+    ];
+  }
+  
+  if (skill.includes('c++') || skill.includes('cpp')) {
+    return [
+      "#include <iostream>",
+      "using namespace std;",
+      "int main() {",
+      "    cout << \"Hello World\" << endl;",
+      "    return 0;",
+      "}",
+      "vector<int> numbers;"
+    ];
+  }
+  
+  if (skill.includes('go') || skill.includes('golang')) {
+    return [
+      "package main",
+      "import \"fmt\"",
+      "func main() {",
+      "    fmt.Println(\"Hello, World!\")",
+      "}",
+      "type User struct { Name string }",
+      "var users []User"
+    ];
+  }
+  
+  if (skill.includes('php')) {
+    return [
+      "<?php",
+      "$name = 'John';",
+      "function calculate($a, $b) {",
+      "    return $a + $b;",
+      "}",
+      "echo \"Hello World\";",
+      "class User { public $name; }"
+    ];
+  }
+  
+  if (skill.includes('ruby')) {
+    return [
+      "class User",
+      "  def initialize(name)",
+      "    @name = name",
+      "  end",
+      "end",
+      "puts 'Hello World'",
+      "users.each { |user| puts user.name }"
     ];
   }
   
