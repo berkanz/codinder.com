@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { SkillCard } from '@/components/SkillCard';
@@ -103,7 +102,7 @@ const Index = () => {
       console.log('Searching real jobs with skills:', topSkillNames, 'location:', location);
       await searchJobs({
         what: topSkillNames,
-        where: location,
+        country: location,
         page: 1,
       });
     }

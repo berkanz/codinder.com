@@ -31,6 +31,74 @@ interface AdzunaResponse {
   count: number;
 }
 
+// Country name to ISO code mapping
+const countryCodeMap: Record<string, string> = {
+  'United Kingdom': 'gb',
+  'United States': 'us',
+  'Canada': 'ca',
+  'Australia': 'au',
+  'Germany': 'de',
+  'France': 'fr',
+  'Netherlands': 'nl',
+  'Sweden': 'se',
+  'Norway': 'no',
+  'Denmark': 'dk',
+  'Switzerland': 'ch',
+  'Austria': 'at',
+  'Belgium': 'be',
+  'Ireland': 'ie',
+  'Spain': 'es',
+  'Italy': 'it',
+  'Portugal': 'pt',
+  'Poland': 'pl',
+  'Czech Republic': 'cz',
+  'Hungary': 'hu',
+  'Finland': 'fi',
+  'Estonia': 'ee',
+  'Latvia': 'lv',
+  'Lithuania': 'lt',
+  'Slovenia': 'si',
+  'Slovakia': 'sk',
+  'Croatia': 'hr',
+  'Romania': 'ro',
+  'Bulgaria': 'bg',
+  'Greece': 'gr',
+  'Cyprus': 'cy',
+  'Malta': 'mt',
+  'Luxembourg': 'lu',
+  'Japan': 'jp',
+  'Singapore': 'sg',
+  'Hong Kong': 'hk',
+  'South Korea': 'kr',
+  'Taiwan': 'tw',
+  'Israel': 'il',
+  'UAE': 'ae',
+  'Saudi Arabia': 'sa',
+  'Qatar': 'qa',
+  'Kuwait': 'kw',
+  'Bahrain': 'bh',
+  'Oman': 'om',
+  'Turkey': 'tr',
+  'India': 'in',
+  'China': 'cn',
+  'Thailand': 'th',
+  'Malaysia': 'my',
+  'Indonesia': 'id',
+  'Philippines': 'ph',
+  'Vietnam': 'vn',
+  'New Zealand': 'nz',
+  'South Africa': 'za',
+  'Kenya': 'ke',
+  'Nigeria': 'ng',
+  'Egypt': 'eg',
+  'Morocco': 'ma',
+  'Brazil': 'br',
+  'Argentina': 'ar',
+  'Chile': 'cl',
+  'Colombia': 'co',
+  'Mexico': 'mx'
+};
+
 serve(async (req) => {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
@@ -47,6 +115,7 @@ serve(async (req) => {
     const results_per_page = parseInt(searchParams.get('results_per_page') || '20');
     const salary_min = searchParams.get('salary_min');
     const sort_by = searchParams.get('sort_by') || 'relevance';
+    const country = searchParams.get('country') || '';
 
     // Get API credentials from environment
     const appId = Deno.env.get('ADZUNA_APP_ID');
@@ -63,8 +132,16 @@ serve(async (req) => {
       );
     }
 
-    // Build Adzuna API URL
-    const baseUrl = 'https://api.adzuna.com/v1/api/jobs/gb/search';
+    // Determine country code - default to 'gb' if no country specified or country not found
+    let countryCode = 'gb';
+    if (country && countryCodeMap[country]) {
+      countryCode = countryCodeMap[country];
+    }
+
+    console.log('Using country code:', countryCode, 'for country:', country);
+
+    // Build Adzuna API URL with dynamic country
+    const baseUrl = `https://api.adzuna.com/v1/api/jobs/${countryCode}/search`;
     const url = new URL(`${baseUrl}/${page}`);
     
     url.searchParams.set('app_id', appId);
@@ -100,7 +177,7 @@ serve(async (req) => {
     }
 
     const data: AdzunaResponse = await response.json();
-    console.log(`Successfully fetched ${data.results?.length || 0} jobs from Adzuna`);
+    console.log(`Successfully fetched ${data.results?.length || 0} jobs from Adzuna for ${countryCode}`);
 
     // Transform the data to match our expected format
     const transformedJobs = data.results?.map(job => ({
@@ -110,9 +187,9 @@ serve(async (req) => {
       location: job.location?.display_name || 'Unknown Location',
       description: job.description || '',
       salary: job.salary_min && job.salary_max 
-        ? `£${job.salary_min.toLocaleString()} - £${job.salary_max.toLocaleString()}`
+        ? `${job.salary_min.toLocaleString()} - ${job.salary_max.toLocaleString()}`
         : job.salary_min 
-        ? `£${job.salary_min.toLocaleString()}+`
+        ? `${job.salary_min.toLocaleString()}+`
         : 'Salary not specified',
       postedDate: new Date(job.created).toLocaleDateString(),
       applyUrl: job.redirect_url,

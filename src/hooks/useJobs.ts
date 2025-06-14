@@ -29,6 +29,7 @@ interface UseJobsReturn {
 interface SearchParams {
   what?: string;
   where?: string;
+  country?: string;
   page?: number;
   salary_min?: string;
   sort_by?: string;
@@ -54,6 +55,7 @@ export const useJobs = (): UseJobsReturn => {
       const queryParams = new URLSearchParams();
       if (params.what) queryParams.set('what', params.what);
       if (params.where) queryParams.set('where', params.where);
+      if (params.country) queryParams.set('country', params.country);
       if (params.page) queryParams.set('page', params.page.toString());
       if (params.salary_min) queryParams.set('salary_min', params.salary_min);
       if (params.sort_by) queryParams.set('sort_by', params.sort_by);
