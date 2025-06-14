@@ -2,7 +2,6 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { SkillCard } from '@/components/SkillCard';
-import { AuthWrapper } from '@/components/AuthWrapper';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -11,7 +10,6 @@ import { ArrowLeft, ArrowRight, Linkedin, RefreshCw, MapPin } from 'lucide-react
 import { useJobs } from '@/hooks/useJobs';
 import { useSkillAssessment } from '@/hooks/useSkillAssessment';
 import skillsData from '@/skills.json';
-import { User } from '@supabase/supabase-js';
 
 type Skill = {
   id: number;
@@ -25,7 +23,7 @@ const getRandomSkills = (allSkills: Skill[], count: number): Skill[] => {
   return shuffled.slice(0, count);
 };
 
-const SkillSwipeApp = ({ user }: { user: User }) => {
+const SkillSwipeApp = () => {
   const [allSkills] = useState<Skill[]>(skillsData);
   const [skills, setSkills] = useState<Skill[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -40,7 +38,7 @@ const SkillSwipeApp = ({ user }: { user: User }) => {
     updateAssessmentCount, 
     saveJobMatches, 
     resetAssessment 
-  } = useSkillAssessment(user);
+  } = useSkillAssessment();
 
   // Initialize with 20 random skills on component mount
   useEffect(() => {
@@ -67,7 +65,7 @@ const SkillSwipeApp = ({ user }: { user: User }) => {
   const calculateJobMatches = async (currentSkills: Skill[]) => {
     console.log('Calculating job matches with skills:', currentSkills.map(s => s.name));
 
-    // Create assessment in database
+    // Create anonymous assessment in database
     const assessmentId = await createAssessment(skills.length, location);
     if (!assessmentId) return;
 
@@ -282,11 +280,7 @@ const SkillSwipeApp = ({ user }: { user: User }) => {
 };
 
 const Index = () => {
-  return (
-    <AuthWrapper>
-      {(user) => <SkillSwipeApp user={user} />}
-    </AuthWrapper>
-  );
+  return <SkillSwipeApp />;
 };
 
 export default Index;

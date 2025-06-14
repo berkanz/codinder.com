@@ -1,6 +1,5 @@
 
 import { useState } from 'react';
-import { User } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
@@ -23,16 +22,16 @@ interface Job {
   requiredSkills: string[];
 }
 
-export const useSkillAssessment = (user: User) => {
+export const useSkillAssessment = () => {
   const [currentAssessmentId, setCurrentAssessmentId] = useState<string | null>(null);
   const { toast } = useToast();
 
   const createAssessment = async (totalSkills: number, location: string) => {
     try {
+      // Create anonymous assessment without user_id requirement
       const { data, error } = await supabase
         .from('skill_assessments')
         .insert({
-          user_id: user.id,
           total_skills_shown: totalSkills,
           skills_matched: 0,
           location: location || null,
@@ -43,7 +42,7 @@ export const useSkillAssessment = (user: User) => {
       if (error) throw error;
 
       setCurrentAssessmentId(data.id);
-      console.log('Created assessment:', data.id);
+      console.log('Created anonymous assessment:', data.id);
       return data.id;
     } catch (error: any) {
       console.error('Error creating assessment:', error);
