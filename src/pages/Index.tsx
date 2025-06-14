@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { SkillCard } from '@/components/SkillCard';
@@ -194,6 +193,13 @@ const SkillSwipeApp = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
+          <div className="mb-6">
+            <img 
+              src="/lovable-uploads/ceaabc34-8495-41f4-8c5c-7ddf246ec2c3.png" 
+              alt="Codinder Logo" 
+              className="w-32 h-32 mx-auto mb-4"
+            />
+          </div>
           <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl mb-4">
             Swipe Your Skill
           </h1>
