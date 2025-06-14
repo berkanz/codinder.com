@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { SkillCard } from '@/components/SkillCard';
@@ -35,7 +34,6 @@ const SkillSwipeApp = () => {
   const { 
     createAssessment, 
     addSkillMatch, 
-    updateAssessmentCount, 
     saveJobMatches, 
     resetAssessment 
   } = useSkillAssessment();
@@ -65,12 +63,9 @@ const SkillSwipeApp = () => {
   const calculateJobMatches = async (currentSkills: Skill[]) => {
     console.log('Calculating job matches with skills:', currentSkills.map(s => s.name));
 
-    // Create anonymous assessment in database
-    const assessmentId = await createAssessment(skills.length, location);
-    if (!assessmentId) return;
-
-    // Update assessment with final skill count
-    await updateAssessmentCount(currentSkills.length);
+    // Create anonymous session in database
+    const sessionId = await createAssessment(skills.length, location);
+    if (!sessionId) return;
 
     // Fetch real jobs based on skills
     if (currentSkills.length > 0) {

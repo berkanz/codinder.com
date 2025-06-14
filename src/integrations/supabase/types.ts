@@ -9,117 +9,38 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      job_matches: {
-        Row: {
-          apply_url: string
-          assessment_id: string
-          category: string | null
-          company: string
-          created_at: string
-          description: string | null
-          id: string
-          job_title: string
-          location: string
-          salary: string | null
-        }
-        Insert: {
-          apply_url: string
-          assessment_id: string
-          category?: string | null
-          company: string
-          created_at?: string
-          description?: string | null
-          id?: string
-          job_title: string
-          location: string
-          salary?: string | null
-        }
-        Update: {
-          apply_url?: string
-          assessment_id?: string
-          category?: string | null
-          company?: string
-          created_at?: string
-          description?: string | null
-          id?: string
-          job_title?: string
-          location?: string
-          salary?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "job_matches_assessment_id_fkey"
-            columns: ["assessment_id"]
-            isOneToOne: false
-            referencedRelation: "skill_assessments"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      skill_assessments: {
+      skill_sessions: {
         Row: {
           created_at: string
           id: string
+          job_matches: Json | null
           location: string | null
+          matched_skills: Json | null
           session_id: string
           skills_matched: number
           total_skills_shown: number
-          user_id: string
         }
         Insert: {
           created_at?: string
           id?: string
+          job_matches?: Json | null
           location?: string | null
+          matched_skills?: Json | null
           session_id?: string
           skills_matched: number
           total_skills_shown: number
-          user_id: string
         }
         Update: {
           created_at?: string
           id?: string
+          job_matches?: Json | null
           location?: string | null
+          matched_skills?: Json | null
           session_id?: string
           skills_matched?: number
           total_skills_shown?: number
-          user_id?: string
         }
         Relationships: []
-      }
-      user_skills: {
-        Row: {
-          assessment_id: string
-          created_at: string
-          id: string
-          skill_category: string
-          skill_id: number
-          skill_name: string
-        }
-        Insert: {
-          assessment_id: string
-          created_at?: string
-          id?: string
-          skill_category: string
-          skill_id: number
-          skill_name: string
-        }
-        Update: {
-          assessment_id?: string
-          created_at?: string
-          id?: string
-          skill_category?: string
-          skill_id?: number
-          skill_name?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "user_skills_assessment_id_fkey"
-            columns: ["assessment_id"]
-            isOneToOne: false
-            referencedRelation: "skill_assessments"
-            referencedColumns: ["id"]
-          },
-        ]
       }
     }
     Views: {

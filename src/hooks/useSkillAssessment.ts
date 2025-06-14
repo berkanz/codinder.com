@@ -23,32 +23,36 @@ interface Job {
 }
 
 export const useSkillAssessment = () => {
-  const [currentAssessmentId, setCurrentAssessmentId] = useState<string | null>(null);
+  const [currentSessionId, setCurrentSessionId] = useState<string | null>(null);
+  const [matchedSkills, setMatchedSkills] = useState<Skill[]>([]);
   const { toast } = useToast();
 
-  const createAssessment = async (totalSkills: number, location: string) => {
+  const createSession = async (totalSkills: number, location: string) => {
     try {
-      // Create anonymous assessment without user_id requirement
+      // Create anonymous session in the simplified table
       const { data, error } = await supabase
-        .from('skill_assessments')
+        .from('skill_sessions')
         .insert({
           total_skills_shown: totalSkills,
           skills_matched: 0,
+          matched_skills: [],
           location: location || null,
+          job_matches: null,
         })
         .select()
         .single();
 
       if (error) throw error;
 
-      setCurrentAssessmentId(data.id);
-      console.log('Created anonymous assessment:', data.id);
+      setCurrentSessionId(data.id);
+      setMatchedSkills([]);
+      console.log('Created anonymous session:', data.id);
       return data.id;
     } catch (error: any) {
-      console.error('Error creating assessment:', error);
+      console.error('Error creating session:', error);
       toast({
         title: "Error",
-        description: "Failed to create skill assessment",
+        description: "Failed to create skill session",
         variant: "destructive",
       });
       return null;
@@ -56,17 +60,19 @@ export const useSkillAssessment = () => {
   };
 
   const addSkillMatch = async (skill: Skill) => {
-    if (!currentAssessmentId) return;
+    if (!currentSessionId) return;
 
     try {
+      const updatedSkills = [...matchedSkills, skill];
+      setMatchedSkills(updatedSkills);
+
       const { error } = await supabase
-        .from('user_skills')
-        .insert({
-          assessment_id: currentAssessmentId,
-          skill_id: skill.id,
-          skill_name: skill.name,
-          skill_category: skill.category,
-        });
+        .from('skill_sessions')
+        .update({
+          skills_matched: updatedSkills.length,
+          matched_skills: updatedSkills,
+        })
+        .eq('id', currentSessionId);
 
       if (error) throw error;
       console.log('Added skill match:', skill.name);
@@ -80,45 +86,25 @@ export const useSkillAssessment = () => {
     }
   };
 
-  const updateAssessmentCount = async (skillsMatched: number) => {
-    if (!currentAssessmentId) return;
-
-    try {
-      const { error } = await supabase
-        .from('skill_assessments')
-        .update({ skills_matched: skillsMatched })
-        .eq('id', currentAssessmentId);
-
-      if (error) throw error;
-      console.log('Updated assessment with', skillsMatched, 'skills matched');
-    } catch (error: any) {
-      console.error('Error updating assessment:', error);
-      toast({
-        title: "Error",
-        description: "Failed to update assessment",
-        variant: "destructive",
-      });
-    }
-  };
-
   const saveJobMatches = async (jobs: Job[]) => {
-    if (!currentAssessmentId || jobs.length === 0) return;
+    if (!currentSessionId || jobs.length === 0) return;
 
     try {
       const jobData = jobs.map(job => ({
-        assessment_id: currentAssessmentId,
-        job_title: job.title,
+        id: job.id,
+        title: job.title,
         company: job.company,
         location: job.location,
         salary: job.salary,
-        apply_url: job.applyUrl,
+        applyUrl: job.applyUrl,
         category: job.category,
         description: job.description,
       }));
 
       const { error } = await supabase
-        .from('job_matches')
-        .insert(jobData);
+        .from('skill_sessions')
+        .update({ job_matches: jobData })
+        .eq('id', currentSessionId);
 
       if (error) throw error;
       console.log('Saved', jobs.length, 'job matches');
@@ -137,15 +123,16 @@ export const useSkillAssessment = () => {
     }
   };
 
-  const resetAssessment = () => {
-    setCurrentAssessmentId(null);
+  const resetSession = () => {
+    setCurrentSessionId(null);
+    setMatchedSkills([]);
   };
 
   return {
-    createAssessment,
+    createAssessment: createSession,
     addSkillMatch,
-    updateAssessmentCount,
+    updateAssessmentCount: () => {}, // No longer needed with simplified structure
     saveJobMatches,
-    resetAssessment,
+    resetAssessment: resetSession,
   };
 };
