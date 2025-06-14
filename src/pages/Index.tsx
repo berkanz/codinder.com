@@ -236,7 +236,7 @@ const SkillSwipeApp = () => {
           <div className="w-full max-w-4xl mb-8">
             <h2 className="text-2xl font-semibold mb-4 text-primary">Programming Job Opportunities for You</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-              {realJobs.slice(0, 6).map(job => (
+              {realJobs.map(job => (
                 <Card key={job.id} className="text-left bg-card border-primary/20 hover:border-primary/50 transition-all">
                   <CardHeader>
                     <CardTitle className="text-lg">{job.title}</CardTitle>
