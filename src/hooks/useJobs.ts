@@ -28,6 +28,7 @@ interface UseJobsReturn {
 
 interface SearchParams {
   what?: string;
+  what_or?: string; // Add support for OR logic
   where?: string;
   country?: string;
   page?: number;
@@ -54,6 +55,7 @@ export const useJobs = (): UseJobsReturn => {
       // Build query parameters as URL search params for GET request
       const queryParams = new URLSearchParams();
       if (params.what) queryParams.set('what', params.what);
+      if (params.what_or) queryParams.set('what_or', params.what_or); // Support OR logic
       if (params.where) queryParams.set('where', params.where);
       if (params.country) queryParams.set('country', params.country);
       if (params.page) queryParams.set('page', params.page.toString());
@@ -102,9 +104,9 @@ export const useJobs = (): UseJobsReturn => {
     }
   };
 
-  // Load default jobs on mount with simpler search terms
+  // Load default jobs on mount with OR logic
   useEffect(() => {
-    searchJobs({ what: 'react typescript developer' });
+    searchJobs({ what_or: 'react typescript javascript' });
   }, []);
 
   return {

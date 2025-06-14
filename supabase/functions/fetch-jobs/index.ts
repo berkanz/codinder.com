@@ -110,6 +110,7 @@ serve(async (req) => {
     
     const { searchParams } = new URL(req.url);
     const what = searchParams.get('what') || '';
+    const what_or = searchParams.get('what_or') || ''; // Support OR logic
     const where = searchParams.get('where') || '';
     const page = parseInt(searchParams.get('page') || '1');
     const results_per_page = parseInt(searchParams.get('results_per_page') || '20');
@@ -117,7 +118,7 @@ serve(async (req) => {
     const sort_by = searchParams.get('sort_by') || 'relevance';
     const country = searchParams.get('country') || '';
 
-    console.log('Received parameters:', { what, where, page, country });
+    console.log('Received parameters:', { what, what_or, where, page, country });
 
     // Get API credentials from environment
     const appId = Deno.env.get('ADZUNA_APP_ID');
@@ -156,7 +157,15 @@ serve(async (req) => {
     url.searchParams.set('max_days_old', '60'); // Jobs from last 60 days
     url.searchParams.set('permanent', '1'); // Permanent positions only
     
-    if (what) url.searchParams.set('what', what);
+    // Use either what or what_or depending on what's provided
+    if (what_or) {
+      url.searchParams.set('what_or', what_or);
+      console.log('Using OR logic with terms:', what_or);
+    } else if (what) {
+      url.searchParams.set('what', what);
+      console.log('Using AND logic with terms:', what);
+    }
+    
     if (where) url.searchParams.set('where', where);
     if (salary_min) url.searchParams.set('salary_min', salary_min);
     if (sort_by) url.searchParams.set('sort_by', sort_by);

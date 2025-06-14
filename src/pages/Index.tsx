@@ -65,36 +65,40 @@ const Index = () => {
 
     // Fetch real jobs based on skills
     if (currentSkills.length > 0) {
-      // Create focused search terms based on top tech skills
+      // Get tech skills for search
       const techSkills = currentSkills.filter(skill => 
         skill.category === 'tech' || skill.category === 'data'
       );
       
-      // Use only the top 2-3 most relevant tech skills for better results
-      let searchTerms = 'developer';
+      // Create search terms for OR logic - use individual skills
+      let searchTerms = '';
       
       if (techSkills.length > 0) {
-        // Take only the first 2-3 tech skills to avoid overly complex queries
-        const topSkills = techSkills.slice(0, 3);
-        const skillNames = topSkills.map(skill => {
+        // Map skills to searchable terms and use OR logic
+        const skillTerms = techSkills.map(skill => {
           // Map some skills to more searchable terms
           if (skill.name === 'Git & GitHub') return 'git';
-          if (skill.name === 'Tailwind CSS') return 'css';
+          if (skill.name === 'Tailwind CSS') return 'tailwind';
           if (skill.name === 'UX/UI Design') return 'frontend';
+          if (skill.name === 'Node.js') return 'nodejs';
           return skill.name.toLowerCase();
-        }).join(' ');
+        });
         
-        searchTerms = `${skillNames} developer`;
+        // Use OR logic with individual terms
+        searchTerms = skillTerms.join(' ');
+      } else {
+        // Fallback for non-tech skills
+        searchTerms = 'developer';
       }
       
-      console.log('Searching real jobs with terms:', searchTerms, 'location:', location);
+      console.log('Searching real jobs with OR terms:', searchTerms, 'location:', location);
       
       const searchParams: any = {
-        what: searchTerms,
+        what_or: searchTerms, // Use what_or for OR logic instead of what
         page: 1,
       };
       
-      // Always pass the country if one is selected
+      // Add country if selected
       if (location) {
         searchParams.country = location;
         console.log('Setting country parameter to:', location);
