@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { SkillCard } from '@/components/SkillCard';
@@ -48,19 +49,25 @@ const SkillSwipeApp = () => {
   }, [countrySelected, allSkills]);
 
   const countries = [
-    'United Kingdom', 'United States', 'Canada', 'Australia', 'Germany', 
-    'France', 'Netherlands', 'Sweden', 'Norway', 'Denmark',
-    'Switzerland', 'Austria', 'Belgium', 'Ireland', 'Spain',
-    'Italy', 'Portugal', 'Poland', 'Czech Republic', 'Hungary',
-    'Finland', 'Estonia', 'Latvia', 'Lithuania', 'Slovenia',
-    'Slovakia', 'Croatia', 'Romania', 'Bulgaria', 'Greece',
-    'Cyprus', 'Malta', 'Luxembourg', 'Japan', 'Singapore',
-    'Hong Kong', 'South Korea', 'Taiwan', 'Israel', 'UAE',
-    'Saudi Arabia', 'Qatar', 'Kuwait', 'Bahrain', 'Oman',
-    'Turkey', 'India', 'China', 'Thailand', 'Malaysia',
-    'Indonesia', 'Philippines', 'Vietnam', 'New Zealand',
-    'South Africa', 'Kenya', 'Nigeria', 'Egypt', 'Morocco',
-    'Brazil', 'Argentina', 'Chile', 'Colombia', 'Mexico'
+    { code: 'gb', name: 'United Kingdom' },
+    { code: 'us', name: 'United States' },
+    { code: 'at', name: 'Austria' },
+    { code: 'au', name: 'Australia' },
+    { code: 'be', name: 'Belgium' },
+    { code: 'br', name: 'Brazil' },
+    { code: 'ca', name: 'Canada' },
+    { code: 'ch', name: 'Switzerland' },
+    { code: 'de', name: 'Germany' },
+    { code: 'es', name: 'Spain' },
+    { code: 'fr', name: 'France' },
+    { code: 'in', name: 'India' },
+    { code: 'it', name: 'Italy' },
+    { code: 'mx', name: 'Mexico' },
+    { code: 'nl', name: 'Netherlands' },
+    { code: 'nz', name: 'New Zealand' },
+    { code: 'pl', name: 'Poland' },
+    { code: 'sg', name: 'Singapore' },
+    { code: 'za', name: 'South Africa' }
   ];
 
   const calculateJobMatches = async (currentSkills: Skill[]) => {
@@ -205,10 +212,13 @@ const SkillSwipeApp = () => {
               </SelectTrigger>
               <SelectContent>
                 {countries.map(country => (
-                  <SelectItem key={country} value={country}>{country}</SelectItem>
+                  <SelectItem key={country.code} value={country.name}>{country.name}</SelectItem>
                 ))}
               </SelectContent>
             </Select>
+            <p className="text-sm text-muted-foreground mt-2">
+              Other countries not yet available
+            </p>
           </div>
           
           {location && (
