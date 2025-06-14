@@ -1,35 +1,22 @@
+
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { SkillCard } from '@/components/SkillCard';
+import { AuthWrapper } from '@/components/AuthWrapper';
 import { Button } from '@/components/ui/button';
-import { Progress } from '@/components/ui/progress';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { ArrowLeft, ArrowRight, Linkedin, RefreshCw, CheckCircle, XCircle, MapPin } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Linkedin, RefreshCw, MapPin } from 'lucide-react';
 import { useJobs } from '@/hooks/useJobs';
+import { useSkillAssessment } from '@/hooks/useSkillAssessment';
 import skillsData from '@/skills.json';
-import jobProfilesData from '@/jobProfiles.json';
+import { User } from '@supabase/supabase-js';
 
 type Skill = {
   id: number;
   name: string;
   category: string;
-};
-
-type JobProfile = {
-  id: string;
-  title: string;
-  description: string;
-  requiredSkills: number[];
-  company: string;
-  location: string;
-};
-
-type MatchedJob = JobProfile & {
-  matchPercentage: number;
-  matchedSkills: Skill[];
-  missingSkills: Skill[];
 };
 
 // Function to randomly select skills
@@ -38,17 +25,22 @@ const getRandomSkills = (allSkills: Skill[], count: number): Skill[] => {
   return shuffled.slice(0, count);
 };
 
-const Index = () => {
+const SkillSwipeApp = ({ user }: { user: User }) => {
   const [allSkills] = useState<Skill[]>(skillsData);
   const [skills, setSkills] = useState<Skill[]>([]);
-  const [jobProfiles] = useState<JobProfile[]>(jobProfilesData);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [mySkills, setMySkills] = useState<Skill[]>([]);
   const [showResults, setShowResults] = useState(false);
   const [direction, setDirection] = useState(0);
-  const [matchedJobs, setMatchedJobs] = useState<MatchedJob[]>([]);
   const [location, setLocation] = useState('');
   const { jobs: realJobs, loading: jobsLoading, searchJobs } = useJobs();
+  const { 
+    createAssessment, 
+    addSkillMatch, 
+    updateAssessmentCount, 
+    saveJobMatches, 
+    resetAssessment 
+  } = useSkillAssessment(user);
 
   // Initialize with 20 random skills on component mount
   useEffect(() => {
@@ -74,6 +66,13 @@ const Index = () => {
 
   const calculateJobMatches = async (currentSkills: Skill[]) => {
     console.log('Calculating job matches with skills:', currentSkills.map(s => s.name));
+
+    // Create assessment in database
+    const assessmentId = await createAssessment(skills.length, location);
+    if (!assessmentId) return;
+
+    // Update assessment with final skill count
+    await updateAssessmentCount(currentSkills.length);
 
     // Fetch real jobs based on skills
     if (currentSkills.length > 0) {
@@ -120,7 +119,14 @@ const Index = () => {
     }
   };
 
-  const handleSwipe = (dir: 'left' | 'right') => {
+  // Save job matches when jobs are loaded
+  useEffect(() => {
+    if (showResults && realJobs.length > 0) {
+      saveJobMatches(realJobs);
+    }
+  }, [showResults, realJobs, saveJobMatches]);
+
+  const handleSwipe = async (dir: 'left' | 'right') => {
     const swipedSkill = skills[currentIndex];
     
     setDirection(dir === 'right' ? 1 : -1);
@@ -129,6 +135,9 @@ const Index = () => {
     if (dir === 'right') {
       updatedMySkills = [...mySkills, swipedSkill];
       setMySkills(updatedMySkills);
+      
+      // Save the skill match to database
+      await addSkillMatch(swipedSkill);
     }
 
     const nextIndex = currentIndex + 1;
@@ -143,7 +152,7 @@ const Index = () => {
     setCurrentIndex(0);
     setMySkills([]);
     setShowResults(false);
-    setMatchedJobs([]);
+    resetAssessment();
     // Get new random skills for the next round
     const randomSkills = getRandomSkills(allSkills, 20);
     setSkills(randomSkills);
@@ -269,6 +278,14 @@ const Index = () => {
         </Button>
       </div>
     </div>
+  );
+};
+
+const Index = () => {
+  return (
+    <AuthWrapper>
+      {(user) => <SkillSwipeApp user={user} />}
+    </AuthWrapper>
   );
 };
 
