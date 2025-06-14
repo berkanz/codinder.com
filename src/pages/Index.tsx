@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { SkillCard } from '@/components/SkillCard';
@@ -76,45 +77,49 @@ const SkillSwipeApp = () => {
     const sessionId = await createAssessment(skills.length, location);
     if (!sessionId) return;
 
-    // Fetch real jobs based on skills - focus on programming/tech jobs
-    if (currentSkills.length > 0) {
-      const techSkills = currentSkills.filter(skill => 
-        skill.category === 'tech' || skill.category === 'data'
-      );
-      
-      let searchTerms = '';
-      
-      if (techSkills.length > 0) {
-        const skillTerms = techSkills.map(skill => {
-          if (skill.name === 'Git & GitHub') return 'git';
-          if (skill.name === 'Tailwind CSS') return 'tailwind';
-          if (skill.name === 'UX/UI Design') return 'frontend developer';
-          if (skill.name === 'Node.js') return 'nodejs';
-          return skill.name.toLowerCase();
-        });
-        
-        const programmingTerms = ['developer', 'programmer', 'software engineer', 'frontend', 'backend', 'fullstack'];
-        const allTerms = [...skillTerms, ...programmingTerms];
-        
-        searchTerms = allTerms.join(' ');
-      } else {
-        searchTerms = 'developer programmer software engineer frontend backend';
-      }
-      
-      console.log('Searching programming jobs with OR terms:', searchTerms, 'location:', location);
-      
-      const searchParams: any = {
-        what_or: searchTerms,
-        page: 1,
-      };
-      
-      if (location) {
-        searchParams.country = location;
-        console.log('Setting country parameter to:', location);
-      }
-      
-      await searchJobs(searchParams);
+    // If no skills selected, don't search for jobs
+    if (currentSkills.length === 0) {
+      console.log('No skills selected, skipping job search');
+      return;
     }
+
+    // Fetch real jobs based on skills - focus on programming/tech jobs
+    const techSkills = currentSkills.filter(skill => 
+      skill.category === 'tech' || skill.category === 'data'
+    );
+    
+    let searchTerms = '';
+    
+    if (techSkills.length > 0) {
+      const skillTerms = techSkills.map(skill => {
+        if (skill.name === 'Git & GitHub') return 'git';
+        if (skill.name === 'Tailwind CSS') return 'tailwind';
+        if (skill.name === 'UX/UI Design') return 'frontend developer';
+        if (skill.name === 'Node.js') return 'nodejs';
+        return skill.name.toLowerCase();
+      });
+      
+      const programmingTerms = ['developer', 'programmer', 'software engineer', 'frontend', 'backend', 'fullstack'];
+      const allTerms = [...skillTerms, ...programmingTerms];
+      
+      searchTerms = allTerms.join(' ');
+    } else {
+      searchTerms = 'developer programmer software engineer frontend backend';
+    }
+    
+    console.log('Searching programming jobs with OR terms:', searchTerms, 'location:', location);
+    
+    const searchParams: any = {
+      what_or: searchTerms,
+      page: 1,
+    };
+    
+    if (location) {
+      searchParams.country = location;
+      console.log('Setting country parameter to:', location);
+    }
+    
+    await searchJobs(searchParams);
   };
 
   // Save job matches when jobs are loaded - only once per session
@@ -251,64 +256,79 @@ const SkillSwipeApp = () => {
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.5 }}
       >
-        <h1 className="text-4xl font-bold mb-2 text-primary">Your Job Matches</h1>
-        <p className="text-xl text-muted-foreground mb-8">Based on your {mySkills.length} skills, here are your opportunities in {location}.</p>
-        
-        {/* Loading spinner while jobs are being fetched */}
-        {jobsLoading && (
-          <div className="flex flex-col items-center justify-center mb-8">
-            <Loader className="h-8 w-8 animate-spin text-primary mb-4" />
-            <p className="text-muted-foreground">Finding programming jobs for you...</p>
-          </div>
-        )}
-
-        {/* Real Job Opportunities */}
-        {!jobsLoading && realJobs.length > 0 && (
-          <div className="w-full max-w-4xl mb-8">
-            <h2 className="text-2xl font-semibold mb-4 text-primary">Programming Job Opportunities for You</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-              {realJobs.map(job => (
-                <Card key={job.id} className="text-left bg-card border-primary/20 hover:border-primary/50 transition-all">
-                  <CardHeader>
-                    <CardTitle className="text-lg">{job.title}</CardTitle>
-                    <CardDescription>{job.company} • {job.location}</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-2">
-                      <p className="text-sm text-muted-foreground">{job.salary}</p>
-                      <Badge variant="secondary">{job.category}</Badge>
-                      <p className="text-sm text-muted-foreground line-clamp-2">{job.description}</p>
-                      <Button
-                        asChild
-                        variant="outline"
-                        size="sm"
-                        className="w-full"
-                      >
-                        <a href={job.applyUrl} target="_blank" rel="noopener noreferrer">
-                          Apply Now
-                        </a>
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Show message if no jobs found and not loading */}
-        {!jobsLoading && realJobs.length === 0 && (
-          <div className="text-center mb-8">
-            <p className="text-muted-foreground">No programming jobs found for your location. Try selecting a different country.</p>
-          </div>
-        )}
-
-        <div className="flex gap-4 mt-8">
-            <Button onClick={restart} variant="outline"><RefreshCw className="mr-2 h-4 w-4" /> Try Again</Button>
-            <Button onClick={exportJobsToTxt} disabled={realJobs.length === 0}>
-              <Download className="mr-2 h-4 w-4" /> Export jobs to .txt file
+        {/* Show message when no skills are selected */}
+        {mySkills.length === 0 ? (
+          <div className="max-w-md">
+            <h1 className="text-4xl font-bold mb-4 text-primary">Oops!</h1>
+            <p className="text-xl text-muted-foreground mb-8">
+              You didn't pick any of the skills, I can't find a job for you now. Expand your tech stack my friend!
+            </p>
+            <Button onClick={restart} variant="outline">
+              <RefreshCw className="mr-2 h-4 w-4" /> Try Again
             </Button>
-        </div>
+          </div>
+        ) : (
+          <>
+            <h1 className="text-4xl font-bold mb-2 text-primary">Your Job Matches</h1>
+            <p className="text-xl text-muted-foreground mb-8">Based on your {mySkills.length} skills, here are your opportunities in {location}.</p>
+            
+            {/* Loading spinner while jobs are being fetched */}
+            {jobsLoading && (
+              <div className="flex flex-col items-center justify-center mb-8">
+                <Loader className="h-8 w-8 animate-spin text-primary mb-4" />
+                <p className="text-muted-foreground">Finding programming jobs for you...</p>
+              </div>
+            )}
+
+            {/* Real Job Opportunities */}
+            {!jobsLoading && realJobs.length > 0 && (
+              <div className="w-full max-w-4xl mb-8">
+                <h2 className="text-2xl font-semibold mb-4 text-primary">Programming Job Opportunities for You</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                  {realJobs.map(job => (
+                    <Card key={job.id} className="text-left bg-card border-primary/20 hover:border-primary/50 transition-all">
+                      <CardHeader>
+                        <CardTitle className="text-lg">{job.title}</CardTitle>
+                        <CardDescription>{job.company} • {job.location}</CardDescription>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="space-y-2">
+                          <p className="text-sm text-muted-foreground">{job.salary}</p>
+                          <Badge variant="secondary">{job.category}</Badge>
+                          <p className="text-sm text-muted-foreground line-clamp-2">{job.description}</p>
+                          <Button
+                            asChild
+                            variant="outline"
+                            size="sm"
+                            className="w-full"
+                          >
+                            <a href={job.applyUrl} target="_blank" rel="noopener noreferrer">
+                              Apply Now
+                            </a>
+                          </Button>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Show message if no jobs found and not loading */}
+            {!jobsLoading && realJobs.length === 0 && (
+              <div className="text-center mb-8">
+                <p className="text-muted-foreground">No programming jobs found for your location. Try selecting a different country.</p>
+              </div>
+            )}
+
+            <div className="flex gap-4 mt-8">
+                <Button onClick={restart} variant="outline"><RefreshCw className="mr-2 h-4 w-4" /> Try Again</Button>
+                <Button onClick={exportJobsToTxt} disabled={realJobs.length === 0}>
+                  <Download className="mr-2 h-4 w-4" /> Export jobs to .txt file
+                </Button>
+            </div>
+          </>
+        )}
       </motion.div>
     );
   }
