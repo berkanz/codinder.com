@@ -265,43 +265,43 @@ const SkillSwipeApp = () => {
             </div>
 
             {/* Feature Cards */}
-            <motion.div 
-              className="grid md:grid-cols-3 gap-6 mb-12"
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.5, duration: 0.5 }}
-            >
-              <Card className="bg-white/5 border-white/10 backdrop-blur-sm">
-                <CardContent className="p-6 text-center">
-                  <Sparkles className="h-12 w-12 text-purple-400 mx-auto mb-4" />
-                  <h3 className="text-lg font-semibold text-white mb-2">Skill Assessment</h3>
-                  <p className="text-gray-400 text-sm">Swipe through tech skills to build your profile</p>
-                </CardContent>
-              </Card>
+            
+            
               
-              <Card className="bg-white/5 border-white/10 backdrop-blur-sm">
-                <CardContent className="p-6 text-center">
-                  <Code className="h-12 w-12 text-blue-400 mx-auto mb-4" />
-                  <h3 className="text-lg font-semibold text-white mb-2">Tech Focused</h3>
-                  <p className="text-gray-400 text-sm">Programming & development opportunities</p>
-                </CardContent>
-              </Card>
+                
+                  
+                  
+                  
+                  
+                  
+                
               
-              <Card className="bg-white/5 border-white/10 backdrop-blur-sm">
-                <CardContent className="p-6 text-center">
-                  <Briefcase className="h-12 w-12 text-green-400 mx-auto mb-4" />
-                  <h3 className="text-lg font-semibold text-white mb-2">Real Jobs</h3>
-                  <p className="text-gray-400 text-sm">Connect with actual job opportunities</p>
-                </CardContent>
-              </Card>
-            </motion.div>
+              
+                
+                  
+                  
+                  
+                  
+                  
+                
+              
+              
+                
+                  
+                  
+                  
+                  
+                  
+                
+              
+            
             
             {/* Location Selection */}
             <motion.div 
               className="max-w-md mx-auto"
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.6, duration: 0.5 }}
+              transition={{ delay: 0.5, duration: 0.5 }}
             >
               <Card className="bg-white/10 border-white/20 backdrop-blur-md">
                 <CardHeader>
