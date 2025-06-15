@@ -26,21 +26,32 @@ const getCardBackground = (category: string) => {
   }
 };
 
-const FloatingCard = ({ skill, delay, x, y }: { skill: Skill; delay: number; x: number; y: number }) => {
+const FloatingCard = ({ skill, delay, x, y, direction }: { skill: Skill; delay: number; x: number; y: number; direction: 'horizontal' | 'vertical' }) => {
+  const isHorizontal = direction === 'horizontal';
+  const endX = isHorizontal ? (x < 0 ? window.innerWidth + 300 : -300) : x;
+  const endY = isHorizontal ? y : (y < 0 ? window.innerHeight + 400 : -400);
+
   return (
     <motion.div
-      className={`absolute w-[300px] h-[400px] rounded-2xl shadow-2xl ${getCardBackground(skill.category)} opacity-25 blur-[2px]`}
-      initial={{ x, y, rotate: Math.random() * 20 - 10 }}
+      className={`absolute w-[300px] h-[400px] rounded-2xl shadow-2xl ${getCardBackground(skill.category)} blur-[2px]`}
+      initial={{ 
+        x, 
+        y, 
+        rotate: Math.random() * 20 - 10,
+        opacity: 1
+      }}
       animate={{
-        x: x + (Math.sin(Date.now() * 0.001 + delay) * 50),
-        y: y + (Math.cos(Date.now() * 0.001 + delay) * 30),
-        rotate: Math.sin(Date.now() * 0.0005 + delay) * 10,
+        x: endX,
+        y: endY,
+        rotate: Math.random() * 20 - 10,
+        opacity: 1
       }}
       transition={{
-        duration: 8 + Math.random() * 4,
+        duration: 15,
+        delay: delay,
+        ease: "linear",
         repeat: Infinity,
-        repeatType: "reverse",
-        ease: "easeInOut",
+        repeatDelay: 0
       }}
     >
       <div className="flex items-center justify-center h-full p-4">
@@ -60,18 +71,25 @@ export const FloatingSkillCards = () => {
   }, []);
 
   const positions = [
-    { x: -200, y: -100 },
-    { x: window.innerWidth - 100, y: -150 },
-    { x: -150, y: window.innerHeight - 300 },
-    { x: window.innerWidth - 200, y: window.innerHeight - 200 },
-    { x: window.innerWidth / 2 - 150, y: -200 },
-    { x: window.innerWidth / 2 + 100, y: window.innerHeight - 100 },
-    { x: -100, y: window.innerHeight / 2 - 200 },
-    { x: window.innerWidth - 50, y: window.innerHeight / 2 + 100 },
-    { x: window.innerWidth / 3, y: -100 },
-    { x: window.innerWidth / 3 * 2, y: window.innerHeight + 50 },
-    { x: -250, y: window.innerHeight / 3 },
-    { x: window.innerWidth + 50, y: window.innerHeight / 3 * 2 },
+    // Cards moving from left to right
+    { x: -350, y: 100, direction: 'horizontal' as const },
+    { x: -350, y: 300, direction: 'horizontal' as const },
+    { x: -350, y: 500, direction: 'horizontal' as const },
+    { x: -350, y: 700, direction: 'horizontal' as const },
+    
+    // Cards moving from right to left
+    { x: window.innerWidth + 50, y: 150, direction: 'horizontal' as const },
+    { x: window.innerWidth + 50, y: 350, direction: 'horizontal' as const },
+    { x: window.innerWidth + 50, y: 550, direction: 'horizontal' as const },
+    { x: window.innerWidth + 50, y: 750, direction: 'horizontal' as const },
+    
+    // Cards moving from top to bottom
+    { x: 200, y: -450, direction: 'vertical' as const },
+    { x: 600, y: -450, direction: 'vertical' as const },
+    
+    // Cards moving from bottom to top
+    { x: 400, y: window.innerHeight + 50, direction: 'vertical' as const },
+    { x: 800, y: window.innerHeight + 50, direction: 'vertical' as const },
   ];
 
   return (
@@ -80,9 +98,10 @@ export const FloatingSkillCards = () => {
         <FloatingCard
           key={skill.id}
           skill={skill}
-          delay={index * 1.2}
+          delay={index * 2}
           x={positions[index]?.x || 0}
           y={positions[index]?.y || 0}
+          direction={positions[index]?.direction || 'horizontal'}
         />
       ))}
     </div>
