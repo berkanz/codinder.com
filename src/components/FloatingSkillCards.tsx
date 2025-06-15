@@ -26,36 +26,35 @@ const getCardBackground = (category: string) => {
   }
 };
 
-const FloatingCard = ({ skill, delay, x, y, direction }: { skill: Skill; delay: number; x: number; y: number; direction: 'horizontal' | 'vertical' }) => {
-  const isHorizontal = direction === 'horizontal';
-  const endX = isHorizontal ? (x < 0 ? window.innerWidth + 300 : -300) : x;
-  const endY = isHorizontal ? y : (y < 0 ? window.innerHeight + 400 : -400);
-
+const StaticCard = ({ skill, x, y, rotation }: { skill: Skill; x: number; y: number; rotation: number }) => {
   return (
     <motion.div
-      className={`absolute w-[300px] h-[400px] rounded-2xl shadow-2xl ${getCardBackground(skill.category)} blur-[2px]`}
+      className={`absolute w-[200px] h-[120px] rounded-xl shadow-lg ${getCardBackground(skill.category)} cursor-pointer`}
+      style={{
+        left: `${x}px`,
+        top: `${y}px`,
+        transform: `rotate(${rotation}deg)`,
+      }}
       initial={{ 
-        x, 
-        y, 
-        rotate: Math.random() * 20 - 10,
-        opacity: 1
+        opacity: 0.3,
+        scale: 0.8,
+      }}
+      whileHover={{
+        opacity: 0.8,
+        scale: 1.05,
+        transition: { duration: 0.2 }
       }}
       animate={{
-        x: endX,
-        y: endY,
-        rotate: Math.random() * 20 - 10,
-        opacity: 1
+        opacity: 0.4,
+        scale: 0.9,
       }}
       transition={{
-        duration: 15,
-        delay: delay,
-        ease: "linear",
-        repeat: Infinity,
-        repeatDelay: 0
+        duration: 0.3,
+        ease: "easeOut"
       }}
     >
-      <div className="flex items-center justify-center h-full p-4">
-        <h3 className="text-2xl font-bold text-white text-center">
+      <div className="flex items-center justify-center h-full p-3">
+        <h3 className="text-sm font-bold text-white text-center leading-tight">
           {skill.name}
         </h3>
       </div>
@@ -64,46 +63,37 @@ const FloatingCard = ({ skill, delay, x, y, direction }: { skill: Skill; delay: 
 };
 
 export const FloatingSkillCards = () => {
-  // Select 12 random skills for floating animation (increased from 6)
-  const floatingSkills = React.useMemo(() => {
+  // Select 15 random skills for scattered background
+  const scatteredSkills = React.useMemo(() => {
     const shuffled = [...skillsData].sort(() => 0.5 - Math.random());
-    return shuffled.slice(0, 12);
+    return shuffled.slice(0, 15);
   }, []);
 
-  const positions = [
-    // Cards moving from left to right
-    { x: -350, y: 100, direction: 'horizontal' as const },
-    { x: -350, y: 300, direction: 'horizontal' as const },
-    { x: -350, y: 500, direction: 'horizontal' as const },
-    { x: -350, y: 700, direction: 'horizontal' as const },
+  // Generate random positions across the viewport
+  const positions = React.useMemo(() => {
+    const viewportWidth = typeof window !== 'undefined' ? window.innerWidth : 1200;
+    const viewportHeight = typeof window !== 'undefined' ? window.innerHeight : 800;
     
-    // Cards moving from right to left
-    { x: window.innerWidth + 50, y: 150, direction: 'horizontal' as const },
-    { x: window.innerWidth + 50, y: 350, direction: 'horizontal' as const },
-    { x: window.innerWidth + 50, y: 550, direction: 'horizontal' as const },
-    { x: window.innerWidth + 50, y: 750, direction: 'horizontal' as const },
-    
-    // Cards moving from top to bottom
-    { x: 200, y: -450, direction: 'vertical' as const },
-    { x: 600, y: -450, direction: 'vertical' as const },
-    
-    // Cards moving from bottom to top
-    { x: 400, y: window.innerHeight + 50, direction: 'vertical' as const },
-    { x: 800, y: window.innerHeight + 50, direction: 'vertical' as const },
-  ];
+    return scatteredSkills.map(() => ({
+      x: Math.random() * (viewportWidth - 200), // Account for card width
+      y: Math.random() * (viewportHeight - 120), // Account for card height
+      rotation: Math.random() * 30 - 15, // Random rotation between -15 and 15 degrees
+    }));
+  }, [scatteredSkills]);
 
   return (
     <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
-      {floatingSkills.map((skill, index) => (
-        <FloatingCard
-          key={skill.id}
-          skill={skill}
-          delay={index * 2}
-          x={positions[index]?.x || 0}
-          y={positions[index]?.y || 0}
-          direction={positions[index]?.direction || 'horizontal'}
-        />
-      ))}
+      <div className="pointer-events-auto">
+        {scatteredSkills.map((skill, index) => (
+          <StaticCard
+            key={skill.id}
+            skill={skill}
+            x={positions[index]?.x || 0}
+            y={positions[index]?.y || 0}
+            rotation={positions[index]?.rotation || 0}
+          />
+        ))}
+      </div>
     </div>
   );
 };
