@@ -1,12 +1,11 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { SkillCard } from '@/components/SkillCard';
-import { FloatingSkillCards } from '@/components/FloatingSkillCards';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { ArrowLeft, ArrowRight, RefreshCw, MapPin, Loader, Download, Sparkles } from 'lucide-react';
+import { ArrowLeft, ArrowRight, RefreshCw, MapPin, Loader, Download } from 'lucide-react';
 import { useJobs } from '@/hooks/useJobs';
 import { useSkillAssessment } from '@/hooks/useSkillAssessment';
 import skillsData from '@/skills.json';
@@ -25,7 +24,7 @@ const getRandomSkills = (allSkills: Skill[], count: number): Skill[] => {
 
 const Footer = () => {
   return (
-    <footer className="w-full py-4 mt-8 border-t bg-background/50 backdrop-blur-sm">
+    <footer className="w-full py-4 mt-8 border-t bg-background">
       <div className="container mx-auto px-4 text-center">
         <p className="text-sm text-muted-foreground">
           Developed by{' '}
@@ -217,106 +216,58 @@ const SkillSwipeApp = () => {
     window.URL.revokeObjectURL(url);
   };
 
-  // Country selection screen with new design
+  // Country selection screen
   if (!countrySelected) {
     return (
-      <div className="min-h-screen flex flex-col relative overflow-hidden bg-gradient-to-br from-background via-background/95 to-primary/5">
-        <FloatingSkillCards />
-        <div className="flex-1 flex flex-col items-center justify-center p-4 relative z-10">
+      <div className="min-h-screen flex flex-col">
+        <div className="flex-1 flex flex-col items-center justify-center p-4">
           <motion.div 
-            className="text-center max-w-lg"
+            className="text-center max-w-md"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
+            transition={{ duration: 0.5 }}
           >
-            <motion.div 
-              className="mb-6"
-              initial={{ scale: 0.8, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{ delay: 0.2, duration: 0.6 }}
-            >
-              <div className="relative">
-                <img 
-                  src="/lovable-uploads/ceaabc34-8495-41f4-8c5c-7ddf246ec2c3.png" 
-                  alt="Codinder Logo" 
-                  className="w-64 h-64 mx-auto mb-4 drop-shadow-2xl"
-                />
-                <motion.div
-                  className="absolute -top-4 -right-4"
-                  animate={{ rotate: 360 }}
-                  transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-                >
-                  <Sparkles className="w-8 h-8 text-primary" />
-                </motion.div>
-              </div>
-            </motion.div>
-            
-            <motion.h1 
-              className="text-5xl font-extrabold tracking-tight lg:text-6xl mb-6 bg-gradient-to-r from-primary via-purple-500 to-pink-500 bg-clip-text text-transparent"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4, duration: 0.6 }}
-            >
+            <div className="mb-6">
+              <img 
+                src="/lovable-uploads/ceaabc34-8495-41f4-8c5c-7ddf246ec2c3.png" 
+                alt="Codinder Logo" 
+                className="w-64 h-64 mx-auto mb-4"
+              />
+            </div>
+            <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl mb-4">
               Swipe Your Skills
-            </motion.h1>
+            </h1>
+            <p className="text-muted-foreground mb-8">
+              Pick your stack and find job opportunities tailored to your skills and location.
+            </p>
             
-            <motion.p 
-              className="text-lg text-muted-foreground mb-8 leading-relaxed"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.6, duration: 0.6 }}
-            >
-              Pick your tech stack and discover job opportunities tailored to your skills and location. 
-              <br />
-              <span className="text-primary font-medium">Swipe like you're dating, but for your career! 💼</span>
-            </motion.p>
-            
-            <motion.div 
-              className="w-full mb-6"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.8, duration: 0.6 }}
-            >
-              <Card className="bg-card/50 backdrop-blur-sm border-primary/20 shadow-xl">
-                <CardHeader className="pb-4">
-                  <div className="flex items-center gap-3 justify-center">
-                    <div className="p-2 rounded-full bg-primary/20">
-                      <MapPin className="h-5 w-5 text-primary" />
-                    </div>
-                    <CardTitle className="text-xl">Choose Your Adventure</CardTitle>
-                  </div>
-                  <CardDescription>Select your dream job location to get started</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <Select value={location} onValueChange={handleCountrySelection}>
-                    <SelectTrigger className="w-full h-12 text-lg">
-                      <SelectValue placeholder="🌍 Pick a country and let's find your perfect match!" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {countries.map(country => (
-                        <SelectItem key={country.code} value={country.name} className="text-lg py-3">
-                          {country.name}
-                        </SelectItem>
-                      ))}
-                      <SelectItem value="other_countries_disabled" disabled className="text-muted-foreground">
-                        Other countries coming soon...
-                      </SelectItem>
-                    </SelectContent>
-                  </Select>
-                </CardContent>
-              </Card>
-            </motion.div>
+            <div className="w-full mb-6">
+              <div className="flex items-center gap-2 mb-4">
+                <MapPin className="h-5 w-5 text-muted-foreground" />
+                <span className="text-lg font-medium">Select Your Job Location</span>
+              </div>
+              <Select value={location} onValueChange={handleCountrySelection}>
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Choose a country to get started" />
+                </SelectTrigger>
+                <SelectContent>
+                  {countries.map(country => (
+                    <SelectItem key={country.code} value={country.name}>{country.name}</SelectItem>
+                  ))}
+                  <SelectItem value="other_countries_disabled" disabled className="text-muted-foreground">
+                    Other countries not yet available
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
             
             {location && (
               <motion.div
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.2, duration: 0.4 }}
-                className="text-center p-4 bg-primary/10 rounded-xl border border-primary/20"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="text-sm text-muted-foreground"
               >
-                <p className="text-primary font-medium">
-                  🚀 Ready to discover amazing opportunities in <span className="font-bold">{location}</span>!
-                </p>
+                Ready to discover programming opportunities in {location}!
               </motion.div>
             )}
           </motion.div>
@@ -330,14 +281,14 @@ const SkillSwipeApp = () => {
 
   if (showResults) {
     return (
-      <div className="min-h-screen flex flex-col relative overflow-hidden bg-gradient-to-br from-background via-background/95 to-primary/5">
-        <FloatingSkillCards />
+      <div className="min-h-screen flex flex-col">
         <motion.div 
-          className="flex-1 flex flex-col items-center justify-center text-center p-4 md:p-8 relative z-10"
+          className="flex-1 flex flex-col items-center justify-center text-center p-4 md:p-8"
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.5 }}
         >
+          {/* Show message when no skills are selected */}
           {mySkills.length === 0 ? (
             <div className="max-w-md">
               <h1 className="text-4xl font-bold mb-4 text-primary">Oops!</h1>
@@ -417,33 +368,13 @@ const SkillSwipeApp = () => {
   }
 
   return (
-    <div className="min-h-screen flex flex-col relative overflow-hidden bg-gradient-to-br from-background via-background/95 to-primary/5">
-      <FloatingSkillCards />
-      <div className="flex-1 flex flex-col items-center justify-center overflow-hidden relative z-10">
-        <motion.h1 
-          className="text-4xl font-extrabold tracking-tight lg:text-5xl mb-4 text-center bg-gradient-to-r from-primary to-purple-500 bg-clip-text text-transparent"
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-        >
+    <div className="min-h-screen flex flex-col">
+      <div className="flex-1 flex flex-col items-center justify-center overflow-hidden">
+        <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl mb-4 text-center">
           Swipe Your Skills
-        </motion.h1>
-        <motion.p 
-          className="text-muted-foreground mb-6"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.2, duration: 0.6 }}
-        >
-          Swipe right for "I have it", left for "I don't".
-        </motion.p>
-        <motion.p 
-          className="text-sm text-muted-foreground mb-8"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.4, duration: 0.6 }}
-        >
-          Looking for jobs in: <strong className="text-primary">{location}</strong>
-        </motion.p>
+        </h1>
+        <p className="text-muted-foreground mb-6">Swipe right for "I have it", left for "I don't".</p>
+        <p className="text-sm text-muted-foreground mb-8">Looking for jobs in: <strong>{location}</strong></p>
         
         <div className="relative w-[300px] h-[400px] mb-12">
           <AnimatePresence custom={direction}>
@@ -458,16 +389,11 @@ const SkillSwipeApp = () => {
           </AnimatePresence>
         </div>
 
-        <motion.div 
-          className="flex items-center gap-8"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.6, duration: 0.6 }}
-        >
+        <div className="flex items-center gap-8">
           <Button 
             variant="outline" 
             size="lg" 
-            className="rounded-full w-20 h-20 bg-red-500/10 border-red-500/30 text-red-500 hover:bg-red-500/20 shadow-lg hover:shadow-xl transition-all"
+            className="rounded-full w-20 h-20 bg-red-500/10 border-red-500/30 text-red-500 hover:bg-red-500/20"
             onClick={() => handleSwipe('left')}
           >
             <ArrowLeft size={32} />
@@ -475,12 +401,12 @@ const SkillSwipeApp = () => {
           <Button 
             variant="outline" 
             size="lg" 
-            className="rounded-full w-20 h-20 bg-green-500/10 border-green-500/30 text-green-500 hover:bg-green-500/20 shadow-lg hover:shadow-xl transition-all"
+            className="rounded-full w-20 h-20 bg-green-500/10 border-green-500/30 text-green-500 hover:bg-green-500/20"
             onClick={() => handleSwipe('right')}
           >
             <ArrowRight size={32} />
           </Button>
-        </motion.div>
+        </div>
       </div>
       <Footer />
     </div>
