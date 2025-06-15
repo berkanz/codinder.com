@@ -29,7 +29,7 @@ const getCardBackground = (category: string) => {
 const FloatingCard = ({ skill, delay, x, y }: { skill: Skill; delay: number; x: number; y: number }) => {
   return (
     <motion.div
-      className={`absolute w-[300px] h-[400px] rounded-2xl shadow-2xl ${getCardBackground(skill.category)} opacity-30 blur-sm`}
+      className={`absolute w-[300px] h-[400px] rounded-2xl shadow-2xl ${getCardBackground(skill.category)} opacity-25 blur-[2px]`}
       initial={{ x, y, rotate: Math.random() * 20 - 10 }}
       animate={{
         x: x + (Math.sin(Date.now() * 0.001 + delay) * 50),
@@ -53,10 +53,10 @@ const FloatingCard = ({ skill, delay, x, y }: { skill: Skill; delay: number; x: 
 };
 
 export const FloatingSkillCards = () => {
-  // Select 6 random skills for floating animation
+  // Select 12 random skills for floating animation (increased from 6)
   const floatingSkills = React.useMemo(() => {
     const shuffled = [...skillsData].sort(() => 0.5 - Math.random());
-    return shuffled.slice(0, 6);
+    return shuffled.slice(0, 12);
   }, []);
 
   const positions = [
@@ -66,6 +66,12 @@ export const FloatingSkillCards = () => {
     { x: window.innerWidth - 200, y: window.innerHeight - 200 },
     { x: window.innerWidth / 2 - 150, y: -200 },
     { x: window.innerWidth / 2 + 100, y: window.innerHeight - 100 },
+    { x: -100, y: window.innerHeight / 2 - 200 },
+    { x: window.innerWidth - 50, y: window.innerHeight / 2 + 100 },
+    { x: window.innerWidth / 3, y: -100 },
+    { x: window.innerWidth / 3 * 2, y: window.innerHeight + 50 },
+    { x: -250, y: window.innerHeight / 3 },
+    { x: window.innerWidth + 50, y: window.innerHeight / 3 * 2 },
   ];
 
   return (
@@ -74,7 +80,7 @@ export const FloatingSkillCards = () => {
         <FloatingCard
           key={skill.id}
           skill={skill}
-          delay={index * 1.5}
+          delay={index * 1.2}
           x={positions[index]?.x || 0}
           y={positions[index]?.y || 0}
         />
