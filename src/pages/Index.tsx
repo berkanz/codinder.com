@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { SkillCard } from '@/components/SkillCard';
@@ -7,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { ArrowLeft, ArrowRight, RefreshCw, MapPin, Loader, Download } from 'lucide-react';
+import { ArrowLeft, ArrowRight, RefreshCw, MapPin, Loader, Download, Sparkles, Code, Briefcase } from 'lucide-react';
 import { useJobs } from '@/hooks/useJobs';
 import { useSkillAssessment } from '@/hooks/useSkillAssessment';
 import skillsData from '@/skills.json';
@@ -221,58 +220,128 @@ const SkillSwipeApp = () => {
   // Country selection screen
   if (!countrySelected) {
     return (
-      <div className="min-h-screen flex flex-col relative">
+      <div className="min-h-screen flex flex-col relative bg-gradient-to-br from-slate-900 via-purple-900/20 to-slate-900">
         <FloatingSkillCards />
         <div className="flex-1 flex flex-col items-center justify-center p-4 relative z-10">
           <motion.div 
-            className="text-center max-w-md"
+            className="text-center max-w-4xl"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
           >
-            <div className="mb-6">
-              <img 
-                src="/lovable-uploads/ceaabc34-8495-41f4-8c5c-7ddf246ec2c3.png" 
-                alt="Codinder Logo" 
-                className="w-64 h-64 mx-auto mb-4"
-              />
-            </div>
-            <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl mb-4">
-              Swipe Your Skills
-            </h1>
-            <p className="text-muted-foreground mb-8">
-              Pick your stack and find job opportunities tailored to your skills and location.
-            </p>
-            
-            <div className="w-full mb-6">
-              <div className="flex items-center gap-2 mb-4">
-                <MapPin className="h-5 w-5 text-muted-foreground" />
-                <span className="text-lg font-medium">Select Your Job Location</span>
-              </div>
-              <Select value={location} onValueChange={handleCountrySelection}>
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Choose a country to get started" />
-                </SelectTrigger>
-                <SelectContent>
-                  {countries.map(country => (
-                    <SelectItem key={country.code} value={country.name}>{country.name}</SelectItem>
-                  ))}
-                  <SelectItem value="other_countries_disabled" disabled className="text-muted-foreground">
-                    Other countries not yet available
-                  </SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            
-            {location && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="text-sm text-muted-foreground"
+            {/* Hero Section */}
+            <div className="mb-12">
+              <motion.div 
+                className="flex items-center justify-center mb-6"
+                initial={{ scale: 0.8, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ delay: 0.2, duration: 0.5 }}
               >
-                Ready to discover programming opportunities in {location}!
+                <img 
+                  src="/lovable-uploads/ceaabc34-8495-41f4-8c5c-7ddf246ec2c3.png" 
+                  alt="Codinder Logo" 
+                  className="w-32 h-32 mx-auto"
+                />
               </motion.div>
-            )}
+              
+              <motion.h1 
+                className="text-6xl md:text-7xl font-extrabold tracking-tight mb-6 bg-gradient-to-r from-white via-purple-200 to-purple-400 bg-clip-text text-transparent"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3, duration: 0.5 }}
+              >
+                Swipe Your Skills
+              </motion.h1>
+              
+              <motion.p 
+                className="text-xl text-gray-300 mb-8 leading-relaxed"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4, duration: 0.5 }}
+              >
+                Discover your tech stack match and unlock<br />
+                <span className="text-purple-300 font-semibold">job opportunities tailored to your skills</span>
+              </motion.p>
+            </div>
+
+            {/* Feature Cards */}
+            <motion.div 
+              className="grid md:grid-cols-3 gap-6 mb-12"
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.5, duration: 0.5 }}
+            >
+              <Card className="bg-white/5 border-white/10 backdrop-blur-sm">
+                <CardContent className="p-6 text-center">
+                  <Sparkles className="h-12 w-12 text-purple-400 mx-auto mb-4" />
+                  <h3 className="text-lg font-semibold text-white mb-2">Skill Assessment</h3>
+                  <p className="text-gray-400 text-sm">Swipe through tech skills to build your profile</p>
+                </CardContent>
+              </Card>
+              
+              <Card className="bg-white/5 border-white/10 backdrop-blur-sm">
+                <CardContent className="p-6 text-center">
+                  <Code className="h-12 w-12 text-blue-400 mx-auto mb-4" />
+                  <h3 className="text-lg font-semibold text-white mb-2">Tech Focused</h3>
+                  <p className="text-gray-400 text-sm">Programming & development opportunities</p>
+                </CardContent>
+              </Card>
+              
+              <Card className="bg-white/5 border-white/10 backdrop-blur-sm">
+                <CardContent className="p-6 text-center">
+                  <Briefcase className="h-12 w-12 text-green-400 mx-auto mb-4" />
+                  <h3 className="text-lg font-semibold text-white mb-2">Real Jobs</h3>
+                  <p className="text-gray-400 text-sm">Connect with actual job opportunities</p>
+                </CardContent>
+              </Card>
+            </motion.div>
+            
+            {/* Location Selection */}
+            <motion.div 
+              className="max-w-md mx-auto"
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.6, duration: 0.5 }}
+            >
+              <Card className="bg-white/10 border-white/20 backdrop-blur-md">
+                <CardHeader>
+                  <div className="flex items-center gap-3 justify-center">
+                    <MapPin className="h-6 w-6 text-purple-400" />
+                    <CardTitle className="text-xl text-white">Choose Your Location</CardTitle>
+                  </div>
+                  <CardDescription className="text-gray-300">
+                    Select your preferred job market to get started
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="pb-6">
+                  <Select value={location} onValueChange={handleCountrySelection}>
+                    <SelectTrigger className="w-full bg-white/10 border-white/20 text-white">
+                      <SelectValue placeholder="Select a country" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {countries.map(country => (
+                        <SelectItem key={country.code} value={country.name}>{country.name}</SelectItem>
+                      ))}
+                      <SelectItem value="other_countries_disabled" disabled className="text-muted-foreground">
+                        Other countries coming soon
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                  
+                  {location && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: 'auto' }}
+                      className="mt-4 text-center"
+                    >
+                      <Badge variant="secondary" className="bg-purple-500/20 text-purple-200 border-purple-500/30">
+                        Ready to explore opportunities in {location}
+                      </Badge>
+                    </motion.div>
+                  )}
+                </CardContent>
+              </Card>
+            </motion.div>
           </motion.div>
         </div>
         <Footer />
