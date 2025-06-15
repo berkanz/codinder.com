@@ -1,6 +1,8 @@
+
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { SkillCard } from '@/components/SkillCard';
+import { FloatingSkillCards } from '@/components/FloatingSkillCards';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -219,8 +221,9 @@ const SkillSwipeApp = () => {
   // Country selection screen
   if (!countrySelected) {
     return (
-      <div className="min-h-screen flex flex-col">
-        <div className="flex-1 flex flex-col items-center justify-center p-4">
+      <div className="min-h-screen flex flex-col relative">
+        <FloatingSkillCards />
+        <div className="flex-1 flex flex-col items-center justify-center p-4 relative z-10">
           <motion.div 
             className="text-center max-w-md"
             initial={{ opacity: 0, y: 20 }}
