@@ -29,20 +29,23 @@ const getCardBackground = (category: string) => {
 const StaticCard = ({ skill, x, y, rotation }: { skill: Skill; x: number; y: number; rotation: number }) => {
   return (
     <motion.div
-      className={`absolute w-[200px] h-[120px] rounded-xl shadow-lg ${getCardBackground(skill.category)} cursor-pointer`}
+      className={`absolute w-[280px] h-[180px] rounded-xl shadow-lg ${getCardBackground(skill.category)} cursor-pointer`}
       style={{
         left: `${x}px`,
         top: `${y}px`,
         transform: `rotate(${rotation}deg)`,
       }}
       initial={{ 
-        opacity: 0.3,
-        scale: 0.8,
+        opacity: 0.4,
+        scale: 0.9,
       }}
       whileHover={{
-        opacity: 0.8,
+        opacity: 0.9,
         scale: 1.05,
-        transition: { duration: 0.2 }
+        x: Math.random() * 20 - 10, // Random movement between -10 and 10px
+        y: Math.random() * 20 - 10, // Random movement between -10 and 10px
+        rotate: rotation + (Math.random() * 10 - 5), // Slight rotation change
+        transition: { duration: 0.3, ease: "easeOut" }
       }}
       animate={{
         opacity: 0.4,
@@ -53,8 +56,8 @@ const StaticCard = ({ skill, x, y, rotation }: { skill: Skill; x: number; y: num
         ease: "easeOut"
       }}
     >
-      <div className="flex items-center justify-center h-full p-3">
-        <h3 className="text-sm font-bold text-white text-center leading-tight">
+      <div className="flex items-center justify-center h-full p-4">
+        <h3 className="text-lg font-bold text-white text-center leading-tight">
           {skill.name}
         </h3>
       </div>
@@ -75,25 +78,23 @@ export const FloatingSkillCards = () => {
     const viewportHeight = typeof window !== 'undefined' ? window.innerHeight : 800;
     
     return scatteredSkills.map(() => ({
-      x: Math.random() * (viewportWidth - 200), // Account for card width
-      y: Math.random() * (viewportHeight - 120), // Account for card height
+      x: Math.random() * (viewportWidth - 280), // Account for card width
+      y: Math.random() * (viewportHeight - 180), // Account for card height
       rotation: Math.random() * 30 - 15, // Random rotation between -15 and 15 degrees
     }));
   }, [scatteredSkills]);
 
   return (
-    <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
-      <div className="pointer-events-auto">
-        {scatteredSkills.map((skill, index) => (
-          <StaticCard
-            key={skill.id}
-            skill={skill}
-            x={positions[index]?.x || 0}
-            y={positions[index]?.y || 0}
-            rotation={positions[index]?.rotation || 0}
-          />
-        ))}
-      </div>
+    <div className="fixed inset-0 overflow-hidden z-0">
+      {scatteredSkills.map((skill, index) => (
+        <StaticCard
+          key={skill.id}
+          skill={skill}
+          x={positions[index]?.x || 0}
+          y={positions[index]?.y || 0}
+          rotation={positions[index]?.rotation || 0}
+        />
+      ))}
     </div>
   );
 };
